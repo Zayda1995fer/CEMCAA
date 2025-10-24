@@ -1,149 +1,27 @@
 import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Card, Form, Button, Image, Modal } from "react-bootstrap";
+import { Container, Row, Col, Card, Button } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import Axios from "axios";
 import Swal from "sweetalert2";
-import {
-  getMascotasService,
-  createMascotaService,
-  updateMascotaService,
-  deleteMascotaService,
-} from "../service/CatalogoService";
-//import "../styles/Catalogo.css";
+import "../App.css"; // estilos globales estandarizados
 
 function Catalogo() {
+  const navigate = useNavigate();
   const imagenPredeterminada =
     "https://www.shutterstock.com/es/image-vector/image-coming-soon-no-picture-video-2450891047";
 
   const [mascotas, setMascotas] = useState([]);
-  const [nombre, setNombre] = useState("");
-  const [especie, setEspecie] = useState("Perro");
-  const [raza, setRaza] = useState("");
-  const [sexo, setSexo] = useState("Macho");
-  const [edadAprox, setEdadAprox] = useState("");
-  const [tamaño, setTamaño] = useState("Mediano");
-  const [marcas, setMarcas] = useState("");
-  const [rasgos, setRasgos] = useState("");
-  const [descripcion, setDescripcion] = useState("");
-  const [imagenPreview, setImagenPreview] = useState(null);
-  const [imagenFile, setImagenFile] = useState(null);
-  const [editar, setEditar] = useState(false);
-  const [idEditar, setIdEditar] = useState(null);
-  const [modalAbierto, setModalAbierto] = useState(false);
-  const [mascotaSeleccionada, setMascotaSeleccionada] = useState(null);
 
   useEffect(() => {
-    obtenerMascotas();
+    getMascotas();
   }, []);
 
-  const obtenerMascotas = async () => {
+  const getMascotas = async () => {
     try {
-      const data = await getMascotasService();
-      setMascotas(data);
+      const res = await Axios.get("http://localhost:3001/animales");
+      setMascotas(res.data);
     } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const limpiarCampos = () => {
-    setNombre("");
-    setEspecie("Perro");
-    setRaza("");
-    setSexo("Macho");
-    setEdadAprox("");
-    setTamaño("Mediano");
-    setMarcas("");
-    setRasgos("");
-    setDescripcion("");
-    setImagenPreview(null);
-    setImagenFile(null);
-    setEditar(false);
-    setIdEditar(null);
-  };
-
-  const handleImagenChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setImagenFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => setImagenPreview(reader.result);
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const agregarMascota = async () => {
-    if (!nombre || !especie || !edadAprox) {
-      Swal.fire({
-        icon: "warning",
-        title: "Campos obligatorios",
-        text: "Por favor completa nombre, especie y edad aproximada.",
-      });
-      return;
-    }
-    try {
-      const formData = new FormData();
-      formData.append("nombre", nombre);
-      formData.append("especie", especie);
-      formData.append("raza", raza);
-      formData.append("sexo", sexo);
-      formData.append("edadAprox", edadAprox);
-      formData.append("tamaño", tamaño);
-      formData.append("marcas", marcas);
-      formData.append("rasgos", rasgos);
-      formData.append("descripcion", descripcion);
-      if (imagenFile) formData.append("imagenMain", imagenFile);
-
-      await createMascotaService(formData);
-      Swal.fire("¡Mascota agregada!", `${nombre} fue registrada correctamente.`, "success");
-      limpiarCampos();
-      obtenerMascotas();
-    } catch {
-      Swal.fire("Error", "No se pudo agregar la mascota.", "error");
-    }
-  };
-
-  const editarMascota = (animal) => {
-    setEditar(true);
-    setIdEditar(animal.Id);
-    setNombre(animal.nombre);
-    setEspecie(animal.especie);
-    setRaza(animal.raza);
-    setSexo(animal.sexo);
-    setEdadAprox(animal.edadAprox);
-    setTamaño(animal.tamaño);
-    setMarcas(animal.marcas);
-    setRasgos(animal.rasgos);
-    setDescripcion(animal.descripcion);
-    setImagenPreview(animal.imagenMain);
-  };
-
-  const actualizarMascota = async () => {
-    if (!nombre || !especie || !edadAprox) {
-      Swal.fire({
-        icon: "warning",
-        title: "Campos obligatorios",
-        text: "Por favor completa nombre, especie y edad aproximada.",
-      });
-      return;
-    }
-    try {
-      const formData = new FormData();
-      formData.append("Id", idEditar);
-      formData.append("nombre", nombre);
-      formData.append("especie", especie);
-      formData.append("raza", raza);
-      formData.append("sexo", sexo);
-      formData.append("edadAprox", edadAprox);
-      formData.append("tamaño", tamaño);
-      formData.append("marcas", marcas);
-      formData.append("rasgos", rasgos);
-      formData.append("descripcion", descripcion);
-      if (imagenFile) formData.append("imagenMain", imagenFile);
-
-      await updateMascotaService(formData);
-      Swal.fire("¡Actualizado!", `${nombre} fue actualizada correctamente.`, "success");
-      limpiarCampos();
-      obtenerMascotas();
-    } catch {
-      Swal.fire("Error", "No se pudo actualizar la mascota.", "error");
+      console.log(err);
     }
   };
 
@@ -155,125 +33,152 @@ function Catalogo() {
       showCancelButton: true,
       confirmButtonText: "Sí, eliminar",
       cancelButtonText: "Cancelar",
-      confirmButtonColor: "#dc3545",
+      confirmButtonColor: "#dc2626",
+      cancelButtonColor: "#6b7280",
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await deleteMascotaService(Id);
-          Swal.fire("Eliminado", `${nombre} fue eliminado correctamente.`, "success");
-          obtenerMascotas();
-        } catch {
-          Swal.fire("Error", "No se pudo eliminar la mascota.", "error");
+          await Axios.delete(`http://localhost:3001/animales/delete/${Id}`);
+          Swal.fire({
+            icon: "success",
+            title: "Eliminado",
+            text: `${nombre} fue eliminado correctamente.`,
+            timer: 2000,
+          });
+          getMascotas();
+        } catch (err) {
+          console.log(err);
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "No se pudo eliminar la mascota.",
+          });
         }
       }
     });
   };
 
   return (
-    <Container className="catalogo-container">
-      {/* Formulario */}
-      <Card className="formulario-card">
-        <h3 className="titulo-formulario">
-          {editar ? "Editar mascota" : "Agregar nueva mascota"}
-        </h3>
-        <Form>
-          <Row className="mb-3">
-            <Col md={6}>
-              <Form.Group controlId="nombre">
-                <Form.Label>Nombre</Form.Label>
-                <Form.Control
-                  value={nombre}
-                  onChange={(e) => setNombre(e.target.value)}
-                  placeholder="Nombre del animal"
+    <Container className="catalogo-container my-5">
+      {/* ENCABEZADO */}
+      <div className="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4">
+        <h2 className="text-center text-md-start mb-3 mb-md-0" style={{ color: "#4f46e5", fontWeight: "700" }}>
+          🐾 Mascotas disponibles para adopción
+        </h2>
+
+        {/* 🔹 BOTÓN AGREGAR MASCOTA */}
+        <Button
+          className="btn btn-primary d-flex align-items-center gap-2 shadow-sm"
+          style={{ fontWeight: "600", borderRadius: "0.5rem" }}
+          onClick={() => navigate("/form-catalogo")}
+        >
+          <i className="bi bi-plus-circle"></i> Agregar Mascota
+        </Button>
+      </div>
+
+      {/* TARJETAS */}
+      <Row className="g-4">
+        {mascotas.map((m) => (
+          <Col key={m.Id} xs={12} sm={6} lg={4}>
+            <Card className="card-animal position-relative h-100 shadow-sm border-0">
+              {/* Imagen */}
+              <div style={{ position: "relative" }}>
+                <Card.Img
+                  variant="top"
+                  src={m.imagenMain || imagenPredeterminada}
+                  alt={m.nombre}
+                  style={{
+                    height: "250px",
+                    objectFit: "cover",
+                    borderTopLeftRadius: "0.75rem",
+                    borderTopRightRadius: "0.75rem",
+                  }}
                 />
-              </Form.Group>
-            </Col>
-            <Col md={6}>
-              <Form.Group controlId="especie">
-                <Form.Label>Especie</Form.Label>
-                <Form.Select value={especie} onChange={(e) => setEspecie(e.target.value)}>
-                  <option>Perro</option>
-                  <option>Gato</option>
-                </Form.Select>
-              </Form.Group>
-            </Col>
-          </Row>
+                <span
+                  className="etiqueta-especie"
+                  style={{
+                    position: "absolute",
+                    top: "10px",
+                    left: "10px",
+                    backgroundColor: "#6366f1",
+                    color: "white",
+                    padding: "0.25rem 0.75rem",
+                    borderRadius: "0.5rem",
+                    fontSize: "0.8rem",
+                    fontWeight: "500",
+                  }}
+                >
+                  {m.especie || "Sin especie"}
+                </span>
+              </div>
 
-          <Form.Group className="mb-3" controlId="imagenMain">
-            <Form.Label>Subir imagen</Form.Label>
-            <Form.Control type="file" accept="image/*" onChange={handleImagenChange} />
-          </Form.Group>
+              {/* Cuerpo del card */}
+              <Card.Body className="card-animal-body d-flex flex-column">
+                <h5 style={{ color: "#1f2937", fontWeight: "600" }}>{m.nombre}</h5>
 
-          <div className="text-center mb-3">
-            <Image
-              src={imagenPreview || imagenPredeterminada}
-              alt="Preview"
-              className="imagen-preview"
-              thumbnail
-            />
+                <ul style={{ listStyle: "none", paddingLeft: 0, fontSize: "0.9rem" }}>
+                  <li>
+                    <strong>Sexo:</strong> {m.sexo}
+                  </li>
+                  <li>
+                    <strong>Edad:</strong> {m.edadAprox || "No especificada"}
+                  </li>
+                  <li>
+                    <strong>Tamaño:</strong> {m.tamaño}
+                  </li>
+                  {m.rasgos && (
+                    <li>
+                      <strong>Carácter:</strong> {m.rasgos}
+                    </li>
+                  )}
+                </ul>
+
+                {m.descripcion && (
+                  <p className="text-muted" style={{ fontSize: "0.9rem" }}>
+                    {m.descripcion.length > 100
+                      ? m.descripcion.substring(0, 100) + "..."
+                      : m.descripcion}
+                  </p>
+                )}
+
+                {/* Botones */}
+                <div className="d-flex justify-content-between mt-auto pt-3 border-top">
+                  <Button
+                    className="btn btn-success d-flex align-items-center gap-1"
+                    size="sm"
+                    onClick={() => navigate("/solicitud")}
+                  >
+                    <i className="bi bi-heart-fill"></i> Adoptar
+                  </Button>
+
+                  <Button
+                    className="btn btn-warning d-flex align-items-center gap-1"
+                    size="sm"
+                    onClick={() => navigate(`/form-catalogo/${m.Id}`)}
+                  >
+                    <i className="bi bi-pencil-square"></i> Editar
+                  </Button>
+
+                  <Button
+                    className="btn btn-danger d-flex align-items-center gap-1"
+                    size="sm"
+                    onClick={() => eliminarMascota(m.Id, m.nombre)}
+                  >
+                    <i className="bi bi-trash-fill"></i> Eliminar
+                  </Button>
+                </div>
+              </Card.Body>
+            </Card>
+          </Col>
+        ))}
+
+        {/* Si no hay mascotas */}
+        {mascotas.length === 0 && (
+          <div className="text-center mt-5">
+            <p style={{ color: "#6b7280" }}>No hay mascotas registradas actualmente 🐶🐱</p>
           </div>
-
-          <div className="botones-formulario">
-            {editar ? (
-              <Button variant="success" onClick={actualizarMascota}>
-                Actualizar mascota
-              </Button>
-            ) : (
-              <Button variant="success" onClick={agregarMascota}>
-                Agregar mascota
-              </Button>
-            )}
-            <Button variant="secondary" onClick={limpiarCampos}>
-              Limpiar
-            </Button>
-          </div>
-        </Form>
-      </Card>
-
-      {/* Catálogo */}
-      <Card className="catalogo-card">
-        <h3 className="titulo-catalogo">Mascotas disponibles</h3>
-        <Row className="g-4">
-          {mascotas.map((m) => (
-            <Col md={4} key={m.Id}>
-              <Card className="card-mascota">
-                <Card.Img src={m.imagenMain || imagenPredeterminada} alt={m.nombre} />
-                <Card.Body>
-                  <Card.Title>{m.nombre}</Card.Title>
-                  <div className="botones-acciones">
-                    <Button onClick={() => { setMascotaSeleccionada(m); setModalAbierto(true); }}>
-                      Ver más
-                    </Button>
-                    <Button onClick={() => editarMascota(m)}>Editar</Button>
-                    <Button variant="danger" onClick={() => eliminarMascota(m.Id, m.nombre)}>
-                      Eliminar
-                    </Button>
-                  </div>
-                </Card.Body>
-              </Card>
-            </Col>
-          ))}
-        </Row>
-      </Card>
-
-      {/* Modal */}
-      {mascotaSeleccionada && (
-        <Modal show={modalAbierto} onHide={() => setModalAbierto(false)} centered>
-          <Modal.Header closeButton>
-            <Modal.Title>{mascotaSeleccionada.nombre}</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Image
-              src={mascotaSeleccionada.imagenMain || imagenPredeterminada}
-              alt={mascotaSeleccionada.nombre}
-              className="imagen-modal"
-            />
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="success" disabled>Adoptar</Button>
-          </Modal.Footer>
-        </Modal>
-      )}
+        )}
+      </Row>
     </Container>
   );
 }
