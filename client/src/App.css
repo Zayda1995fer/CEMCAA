@@ -1,28 +1,239 @@
-  .App {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+/* ====================================
+   ESTILOS GLOBALES - APLICACIÓN COMPLETA
+   Basado en el diseño de Solicitud de Adopción
+   ==================================== */
+
+/* Fuente y fondo general */
+body {
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(to bottom right, #eff6ff, #e0e7ff);
+  color: #1f2937;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+/* Contenedor principal */
+.App {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  min-height: 100vh;
+}
+
+/* =============================
+   SECCIÓN DE DATOS (formularios simples)
+   ============================= */
+.datos {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 2rem 1rem;
+  background-color: #f9fafb;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.datos input {
+  width: 300px;
+  height: 40px;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  margin: 0.5rem;
+  border: 1px solid #d1d5db;
+  transition: all 0.2s;
+}
+
+.datos input:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.datos button {
+  width: 320px;
+  height: 45px;
+  margin-top: 0.5rem;
+  background-color: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.datos button:hover {
+  background-color: #4338ca;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* =============================
+   CATÁLOGO DE MASCOTAS (cards)
+   ============================= */
+.catalogo-container {
+  padding: 2rem;
+}
+
+.card-animal {
+  background-color: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 15px -5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  overflow: hidden;
+}
+
+.card-animal:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.15);
+}
+
+.card-animal img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+}
+
+.card-animal-body {
+  padding: 1rem 1.25rem;
+}
+
+.card-animal h5 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 0.25rem;
+}
+
+.card-animal small {
+  color: #6b7280;
+}
+
+.card-animal ul {
+  list-style: none;
+  padding: 0;
+  margin: 0.75rem 0;
+}
+
+.card-animal ul li {
+  font-size: 0.9rem;
+  margin-bottom: 0.25rem;
+  color: #374151;
+}
+
+.card-animal p {
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+/* Etiqueta de especie */
+.etiqueta-especie {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: #4f46e5;
+  color: white;
+  font-weight: 600;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  text-transform: uppercase;
+}
+
+/* =============================
+   BOTONES ESTÁNDAR
+   ============================= */
+.btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn-primary {
+  background-color: #4f46e5;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #4338ca;
+}
+
+.btn-success {
+  background-color: #059669;
+  color: white;
+}
+
+.btn-success:hover {
+  background-color: #047857;
+}
+
+.btn-warning {
+  background-color: #fbbf24;
+  color: #1f2937;
+}
+
+.btn-warning:hover {
+  background-color: #f59e0b;
+}
+
+.btn-danger {
+  background-color: #dc2626;
+  color: white;
+}
+
+.btn-danger:hover {
+  background-color: #b91c1c;
+}
+
+/* =============================
+   ANIMACIONES Y RESPONSIVE
+   ============================= */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card-animal {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@media (max-width: 768px) {
+  .catalogo-container {
+    padding: 1rem;
   }
 
-  .datos{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+  .card-animal img {
+    height: 180px;
+  }
+
+  .btn {
     width: 100%;
-    align-items: center;
+    justify-content: center;
   }
-
-  .datos input{
-    width: 300px;
-    height: 30px;
-    font-size: 20px;
-    padding-left: 10px;
-    border-radius: 5px;
-    margin: 5px;
-  }
-
-  .datos button{
-    width: 320px;
-    height: 50%;
-    margin-top: 5px;
-  }
+}
