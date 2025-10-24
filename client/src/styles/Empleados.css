@@ -1,0 +1,15 @@
+.empleado-form input {
+  margin-right: 10px;
+}
+
+.empleado-form .btn {
+  width: 120px;
+}
+
+.empleado-table th, .empleado-table td {
+  text-align: center;
+}
+
+.container {
+  margin-top: 30px;
+}

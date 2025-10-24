@@ -1,187 +1,257 @@
-import React, { useState, useEffect } from "react";
-import Axios from "axios";
+const express = require('express');
+const mysql = require('mysql2');
+const cors = require('cors');
+const bcrypt = require('bcrypt');
 
-function Empleados() {
-  const [nombre, setNombre] = useState("");
-  const [edad, setEdad] = useState(0);
-  const [pais, setPais] = useState("");
-  const [cargo, setCargo] = useState("");
-  const [años, setAños] = useState(0);
-  const [id, setId] = useState(null);
-  const [editar, setEditar] = useState(false);
-  const [empleadosList, setEmpleados] = useState([]);
+const app = express();
 
-  // Crear empleado
-  const add = () => {
-    Axios.post("http://localhost:3001/create", {
-      nombre: nombre,
-      edad: edad,
-      pais: pais,
-      cargo: cargo,
-      años: años,
-    }).then(() => {
-      getEmpleados();
-      limpiarCampos();
+
+// Login para empleados
+app.post('/login/empleado', async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ 
+      success: false, 
+      message: 'Email y contraseña son requeridos' 
     });
-  };
+  }
 
-  // Obtener empleados
-  const getEmpleados = () => {
-    Axios.get("http://localhost:3001/empleados").then((response) => {
-      setEmpleados(response.data);
+  const sql = 'SELECT * FROM empleados WHERE email = ?';
+  
+  db.query(sql, [email], async (err, result) => {
+    if (err) {
+      console.error('Error en la consulta:', err);
+      return res.status(500).json({ 
+        success: false, 
+        message: 'Error en el servidor' 
+      });
+    }
+
+    if (result.length === 0) {
+      return res.status(401).json({ 
+        success: false, 
+        message: 'Credenciales incorrectas' 
+      });
+    }
+
+    const empleado = result[0];
+    
+    // Comparar contraseñas (si están hasheadas con bcrypt)
+    try {
+      const passwordMatch = await bcrypt.compare(password, empleado.password);
+      
+      if (passwordMatch) {
+        return res.json({
+          success: true,
+          tipo: 'empleado',
+          usuario: {
+            id: empleado.id,
+            nombre: empleado.nombre,
+            email: empleado.email,
+            cargo: empleado.cargo,
+            edad: empleado.edad,
+            pais: empleado.pais,
+            años: empleado.años
+          }
+        });
+      } else {
+        return res.status(401).json({ 
+          success: false, 
+          message: 'Credenciales incorrectas' 
+        });
+      }
+    } catch (error) {
+      // Si la contraseña no está hasheada, comparar directamente
+      if (password === empleado.password) {
+        return res.json({
+          success: true,
+          tipo: 'empleado',
+          usuario: {
+            id: empleado.id,
+            nombre: empleado.nombre,
+            email: empleado.email,
+            cargo: empleado.cargo,
+            edad: empleado.edad,
+            pais: empleado.pais,
+            años: empleado.años
+          }
+        });
+      } else {
+        return res.status(401).json({ 
+          success: false, 
+          message: 'Credenciales incorrectas' 
+        });
+      }
+    }
+  });
+});
+
+// Login para usuarios
+app.post('/login/usuario', async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ 
+      success: false, 
+      message: 'Email y contraseña son requeridos' 
     });
-  };
+  }
 
-  // Actualizar empleado
-  const update = () => {
-    Axios.put("http://localhost:3001/update", {
-      id: id,
-      nombre: nombre,
-      edad: edad,
-      pais: pais,
-      cargo: cargo,
-      años: años,
-    }).then(() => {
-      getEmpleados();
-      limpiarCampos();
-      setEditar(false);
+  const sql = 'SELECT * FROM usuarios WHERE email = ?';
+  
+  db.query(sql, [email], async (err, result) => {
+    if (err) {
+      console.error('Error en la consulta:', err);
+      return res.status(500).json({ 
+        success: false, 
+        message: 'Error en el servidor' 
+      });
+    }
+
+    if (result.length === 0) {
+      return res.status(401).json({ 
+        success: false, 
+        message: 'Credenciales incorrectas' 
+      });
+    }
+
+    const usuario = result[0];
+    
+    // Comparar contraseñas (si están hasheadas con bcrypt)
+    try {
+      const passwordMatch = await bcrypt.compare(password, usuario.password);
+      
+      if (passwordMatch) {
+        return res.json({
+          success: true,
+          tipo: 'usuario',
+          usuario: {
+            id: usuario.id,
+            nombre_completo: usuario.nombre_completo,
+            email: usuario.email,
+            edad: usuario.edad,
+            telefono: usuario.telefono,
+            direccion: usuario.direccion,
+            ocupacion: usuario.ocupacion
+          }
+        });
+      } else {
+        return res.status(401).json({ 
+          success: false, 
+          message: 'Credenciales incorrectas' 
+        });
+      }
+    } catch (error) {
+      // Si la contraseña no está hasheada, comparar directamente
+      if (password === usuario.password) {
+        return res.json({
+          success: true,
+          tipo: 'usuario',
+          usuario: {
+            id: usuario.id,
+            nombre_completo: usuario.nombre_completo,
+            email: usuario.email,
+            edad: usuario.edad,
+            telefono: usuario.telefono,
+            direccion: usuario.direccion,
+            ocupacion: usuario.ocupacion
+          }
+        });
+      } else {
+        return res.status(401).json({ 
+          success: false, 
+          message: 'Credenciales incorrectas' 
+        });
+      }
+    }
+  });
+});
+
+// ====================================
+// RUTAS DE REGISTRO
+// ====================================
+
+// Registro de usuarios
+app.post('/register/usuario', async (req, res) => {
+  const {
+    nombre_completo,
+    edad,
+    telefono,
+    email,
+    direccion,
+    ocupacion,
+    horario_laboral_inicio,
+    horario_laboral_fin,
+    password
+  } = req.body;
+
+  // Validaciones
+  if (!nombre_completo || !edad || !telefono || !email || !direccion || !ocupacion || !password) {
+    return res.status(400).json({ 
+      success: false, 
+      message: 'Todos los campos obligatorios deben ser completados' 
     });
-  };
+  }
 
-  // Eliminar empleado
-  const eliminar = (id) => {
-    Axios.delete(`http://localhost:3001/delete/${id}`).then(() => {
-      getEmpleados();
+  // Validar formato de email
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return res.status(400).json({ 
+      success: false, 
+      message: 'Email inválido' 
     });
-  };
+  }
 
-  // Llenar formulario con datos al editar
-  const editarEmpleado = (val) => {
-    setEditar(true);
-    setId(val.id);
-    setNombre(val.nombre);
-    setEdad(val.edad);
-    setPais(val.pais);
-    setCargo(val.cargo);
-    setAños(val.años);
-  };
+  // Verificar si el email ya existe
+  const checkEmailSql = 'SELECT * FROM usuarios WHERE email = ?';
+  
+  db.query(checkEmailSql, [email], async (err, result) => {
+    if (err) {
+      console.error('Error verificando email:', err);
+      return res.status(500).json({ 
+        success: false, 
+        message: 'Error en el servidor' 
+      });
+    }
 
-  // Limpiar campos
-  const limpiarCampos = () => {
-    setId(null);
-    setNombre("");
-    setEdad(0);
-    setPais("");
-    setCargo("");
-    setAños(0);
-  };
+    if (result.length > 0) {
+      return res.status(409).json({ 
+        success: false, 
+        message: 'Este email ya está registrado' 
+      });
+    }
 
-  useEffect(() => {
-    getEmpleados();
-  }, []);
+    // Hashear la contraseña
+    try {
+      const hashedPassword = await bcrypt.hash(password, 10);
 
-  return (
-    <div className="container">
-      <div className="card text-center">
-        <div className="card-header">Gestión de Empleados</div>
-        <div className="card-body">
-          <div className="input-group mb-3">
-            <input
-              type="text"
-              placeholder="Nombre"
-              className="form-control"
-              value={nombre}
-              onChange={(e) => setNombre(e.target.value)}
-            />
-            <input
-              type="number"
-              placeholder="Edad"
-              className="form-control"
-              value={edad}
-              onChange={(e) => setEdad(e.target.value)}
-            />
-            <input
-              type="text"
-              placeholder="País"
-              className="form-control"
-              value={pais}
-              onChange={(e) => setPais(e.target.value)}
-            />
-          </div>
+      const insertSql = `
+        INSERT INTO usuarios 
+        (nombre_completo, edad, telefono, email, direccion, ocupacion, 
+         horario_laboral_inicio, horario_laboral_fin, password, fecha_registro) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+      `;
 
-          <div className="input-group mb-3">
-            <input
-              type="text"
-              placeholder="Cargo"
-              className="form-control"
-              value={cargo}
-              onChange={(e) => setCargo(e.target.value)}
-            />
-            <input
-              type="number"
-              placeholder="Años de experiencia"
-              className="form-control"
-              value={años}
-              onChange={(e) => setAños(e.target.value)}
-            />
-          </div>
+      const values = [
+        nombre_completo,
+        edad,
+        telefono,
+        email,
+        direccion,
+        ocupacion,
+        horario_laboral_inicio || null,
+        horario_laboral_fin || null,
+        hashedPassword
+      ];
 
-          {editar ? (
-            <div>
-              <button className="btn btn-warning m-2" onClick={update}>
-                Actualizar
-              </button>
-              <button className="btn btn-secondary m-2" onClick={limpiarCampos}>
-                Cancelar
-              </button>
-            </div>
-          ) : (
-            <button className="btn btn-success" onClick={add}>
-              Registrar
-            </button>
-          )}
-        </div>
-      </div>
+      db.query(insertSql, values, (err, result) => {
+        if (err) {
+          console.error('Error insertando usuario:', err);
+          return res.status(500).json({ 
+            success: false, 
+            message: 'Error al registrar usuario' 
+          });
+       }
 
-      <table className="table table-striped mt-4">
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Edad</th>
-            <th>País</th>
-            <th>Cargo</th>
-            <th>Años</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {empleadosList.map((val) => (
-            <tr key={val.id}>
-              <td>{val.nombre}</td>
-              <td>{val.edad}</td>
-              <td>{val.pais}</td>
-              <td>{val.cargo}</td>
-              <td>{val.años}</td>
-              <td>
-                <button
-                  className="btn btn-info m-1"
-                  onClick={() => editarEmpleado(val)}
-                >
-                  Editar
-                </button>
-                <button
-                  className="btn btn-danger m-1"
-                  onClick={() => eliminar(val.id)}
-                >
-                  Eliminar
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-export default Empleados;
+        res
