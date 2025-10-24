@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, NavLink } from "react-router-dom";
 import { FaPaw, FaUser, FaDog } from "react-icons/fa"; // Huella, usuario y perro
 import 'bootstrap/dist/css/bootstrap.min.css';
+import "bootstrap-icons/font/bootstrap-icons.css";
 
 // Páginas
 import Home from "./pages/Home";
@@ -8,6 +9,7 @@ import Empleados from "./pages/Empleados";
 import Catalogo from "./pages/Catalogo";
 import Login from "./pages/Login";
 import Solicitud from "./pages/Solicitud"; // Nueva página
+import FormCatalogo from "./pages/FormCatalogo";
 
 function App() {
   return (
@@ -86,8 +88,11 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/empleados" element={<Empleados />} />
         <Route path="/catalogo" element={<Catalogo />} />
+        <Route path="/form-catalogo" element={<FormCatalogo />} />
+        <Route path="/form-catalogo/:id" element={<FormCatalogo />} />
         <Route path="/login" element={<Login />} />
         <Route path="/solicitud" element={<Solicitud />} /> {/* Nueva ruta */}
+
       </Routes>
     </Router>
   );
