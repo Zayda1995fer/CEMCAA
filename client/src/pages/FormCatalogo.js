@@ -12,7 +12,7 @@ function FormCatalogo() {
   const imagenPredeterminada =
     "https://www.shutterstock.com/es/image-vector/image-coming-soon-no-picture-video-2450891047";
 
-  // Campos del formulario
+  // Estados del formulario
   const [nombre, setNombre] = useState("");
   const [especie, setEspecie] = useState("Perro");
   const [raza, setRaza] = useState("");
@@ -22,6 +22,7 @@ function FormCatalogo() {
   const [marcas, setMarcas] = useState("");
   const [rasgos, setRasgos] = useState("");
   const [descripcion, setDescripcion] = useState("");
+  const [estatus, setEstatus] = useState("En adopción");
   const [imagenPreview, setImagenPreview] = useState(null);
   const [imagenFile, setImagenFile] = useState(null);
   const [modoEditar, setModoEditar] = useState(false);
@@ -31,6 +32,7 @@ function FormCatalogo() {
       setModoEditar(true);
       obtenerMascota();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const obtenerMascota = async () => {
@@ -42,28 +44,29 @@ function FormCatalogo() {
         if (mascota) res = { data: mascota };
       }
 
-      const m = res.data;
-      setNombre(m.nombre);
-      setEspecie(m.especie);
-      setRaza(m.raza);
-      setSexo(m.sexo);
-      setEdadAprox(m.edadAprox);
-      setTamaño(m.tamaño);
-      setMarcas(m.marcas);
-      setRasgos(m.rasgos);
-      setDescripcion(m.descripcion);
-      setImagenPreview(m.imagenMain);
+      if (res?.data) {
+        const m = res.data;
+        setNombre(m.nombre || "");
+        setEspecie(m.especie || "Perro");
+        setRaza(m.raza || "");
+        setSexo(m.sexo || "Macho");
+        setEdadAprox(m.edadAprox || "");
+        setTamaño(m.tamaño || "Mediano");
+        setMarcas(m.marcas || "");
+        setRasgos(m.rasgos || "");
+        setDescripcion(m.descripcion || "");
+        setEstatus(m.estatus || "En adopción");
+        setImagenPreview(m.imagenMain || imagenPredeterminada);
+      }
     } catch (err) {
-      console.log(err);
+      console.error(err);
       Swal.fire("Error", "No se pudo cargar la información de la mascota.", "error");
     }
   };
 
-  // ✅ Función corregida para validar imágenes
   const handleImagenChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Verificar tamaño del archivo
       if (file.size > 2 * 1024 * 1024) {
         Swal.fire({
           icon: "warning",
@@ -74,7 +77,6 @@ function FormCatalogo() {
         return;
       }
 
-      // Verificar dimensiones de la imagen usando window.Image()
       const img = new window.Image();
       img.onload = () => {
         if (img.width < 800 || img.height < 600) {
@@ -89,7 +91,6 @@ function FormCatalogo() {
       };
       img.src = URL.createObjectURL(file);
 
-      // Mostrar previsualización
       setImagenFile(file);
       const reader = new FileReader();
       reader.onloadend = () => setImagenPreview(reader.result);
@@ -117,24 +118,35 @@ function FormCatalogo() {
     formData.append("marcas", marcas);
     formData.append("rasgos", rasgos);
     formData.append("descripcion", descripcion);
-    if (imagenFile) formData.append("imagenMain", imagenFile);
+    formData.append("estatus", estatus);
 
     try {
       if (modoEditar) {
         formData.append("Id", id);
+
+        if (imagenFile) {
+          formData.append("imagenMain", imagenFile);
+        } else if (imagenPreview) {
+          const response = await fetch(imagenPreview);
+          const blob = await response.blob();
+          formData.append("imagenMain", blob, "imagenActual.jpg");
+        }
+
         await Axios.put("http://localhost:3001/animales/update", formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
         Swal.fire("Actualizado", "La mascota fue actualizada correctamente.", "success");
       } else {
+        if (imagenFile) formData.append("imagenMain", imagenFile);
         await Axios.post("http://localhost:3001/animales/create", formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
         Swal.fire("Agregado", "La mascota fue registrada correctamente.", "success");
       }
+
       navigate("/catalogo");
     } catch (err) {
-      console.log(err);
+      console.error(err);
       Swal.fire("Error", "No se pudo guardar la mascota.", "error");
     }
   };
@@ -162,21 +174,14 @@ function FormCatalogo() {
             {modoEditar ? "🐾 Editar Mascota" : "➕ Agregar Nueva Mascota"}
           </h2>
           <p style={{ color: "#6b7280", fontSize: "0.95rem" }}>
-            Completa la información de la mascota para registrarla o actualizar sus datos.
+            Completa la información para registrar o actualizar una mascota.
           </p>
         </div>
 
         <Form className="solicitud-form">
-          {/* 🐶 Datos Generales */}
+          {/* Datos Generales */}
           <div className="mb-4">
-            <h5
-              className="seccion-titulo"
-              style={{
-                borderBottom: "2px solid #e0e7ff",
-                paddingBottom: "0.5rem",
-                marginBottom: "1rem",
-              }}
-            >
+            <h5 className="seccion-titulo" style={{ borderBottom: "2px solid #e0e7ff" }}>
               🐶 Datos Generales
             </h5>
 
@@ -208,7 +213,7 @@ function FormCatalogo() {
               </Col>
             </Row>
 
-            <Row>
+            <Row className="mb-3">
               <Col md={6}>
                 <Form.Group>
                   <Form.Label className="form-label">Raza</Form.Label>
@@ -235,20 +240,6 @@ function FormCatalogo() {
                 </Form.Group>
               </Col>
             </Row>
-          </div>
-
-          {/* 🎨 Detalles Físicos */}
-          <div className="mb-4">
-            <h5
-              className="seccion-titulo"
-              style={{
-                borderBottom: "2px solid #e0e7ff",
-                paddingBottom: "0.5rem",
-                marginBottom: "1rem",
-              }}
-            >
-              🎨 Detalles Físicos
-            </h5>
 
             <Row className="mb-3">
               <Col md={4}>
@@ -259,7 +250,7 @@ function FormCatalogo() {
                     type="text"
                     value={edadAprox}
                     onChange={(e) => setEdadAprox(e.target.value)}
-                    placeholder="Ej: 2 años"
+                    placeholder="Ej: 3 años"
                   />
                 </Form.Group>
               </Col>
@@ -279,41 +270,54 @@ function FormCatalogo() {
               </Col>
               <Col md={4}>
                 <Form.Group>
-                  <Form.Label className="form-label">Color / Marcas</Form.Label>
-                  <Form.Control
+                  <Form.Label className="form-label">Estatus</Form.Label>
+                  <Form.Select
                     className="form-input"
-                    type="text"
-                    value={marcas}
-                    onChange={(e) => setMarcas(e.target.value)}
-                    placeholder="Ej: Blanco con manchas cafés"
-                  />
+                    value={estatus}
+                    onChange={(e) => setEstatus(e.target.value)}
+                  >
+                    <option>En adopción</option>
+                    <option>Perdido</option>
+                    <option>Adoptado</option>
+                    <option>Entregado</option>
+                  </Form.Select>
                 </Form.Group>
               </Col>
             </Row>
 
-            <Form.Group className="mb-3">
-              <Form.Label className="form-label">Rasgos Especiales</Form.Label>
-              <Form.Control
-                as="textarea"
-                className="form-input"
-                rows={2}
-                value={rasgos}
-                onChange={(e) => setRasgos(e.target.value)}
-                placeholder="Ej: Tiene una cicatriz en la pata trasera."
-              />
-            </Form.Group>
+            <Row className="mb-3">
+              <Col md={6}>
+                <Form.Group>
+                  <Form.Label className="form-label">Color / Marcas</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    className="form-input"
+                    rows={2}
+                    value={marcas}
+                    onChange={(e) => setMarcas(e.target.value)}
+                    placeholder="Ej: Mancha blanca en el pecho, orejas negras..."
+                  />
+                </Form.Group>
+              </Col>
+              <Col md={6}>
+                <Form.Group>
+                  <Form.Label className="form-label">Rasgos distintivos</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    className="form-input"
+                    rows={2}
+                    value={rasgos}
+                    onChange={(e) => setRasgos(e.target.value)}
+                    placeholder="Ej: Cojea de la pata trasera, muy sociable..."
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
           </div>
 
-          {/* 📸 Descripción y Foto */}
+          {/* Descripción e Imagen */}
           <div className="mb-4">
-            <h5
-              className="seccion-titulo"
-              style={{
-                borderBottom: "2px solid #e0e7ff",
-                paddingBottom: "0.5rem",
-                marginBottom: "1rem",
-              }}
-            >
+            <h5 className="seccion-titulo" style={{ borderBottom: "2px solid #e0e7ff" }}>
               📸 Descripción y Fotografía
             </h5>
 
@@ -325,7 +329,7 @@ function FormCatalogo() {
                 rows={3}
                 value={descripcion}
                 onChange={(e) => setDescripcion(e.target.value)}
-                placeholder="Describe el temperamento o comportamiento del animal..."
+                placeholder="Describe el temperamento o características del animal..."
               />
             </Form.Group>
 
@@ -338,7 +342,7 @@ function FormCatalogo() {
                 onChange={handleImagenChange}
               />
               <small className="form-help">
-                Formato horizontal, mínimo 800x600 px, máximo 2MB
+                Formato horizontal (mínimo 800x600 px, máximo 2 MB)
               </small>
             </Form.Group>
 
@@ -358,7 +362,6 @@ function FormCatalogo() {
             )}
           </div>
 
-          {/* 🧭 Navegación */}
           <div className="form-navigation">
             <Button
               type="button"
