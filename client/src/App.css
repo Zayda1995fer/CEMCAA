@@ -980,4 +980,175 @@ main {
   .registro-acciones {
     justify-content: center;
   }
+/* ====== SIDEBAR ====== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -250px;
+  width: 250px;
+  height: 100%;
+  background-color: #212529;
+  color: white;
+  padding: 20px;
+  transition: all 0.3s ease;
+  z-index: 1000;
 }
+
+.sidebar.open {
+  left: 0;
+}
+
+.sidebar .nav-link {
+  color: #ccc;
+  padding: 10px 0;
+  display: block;
+  text-decoration: none;
+}
+
+.sidebar .nav-link:hover,
+.sidebar .nav-link.active {
+  color: #4f46e5;
+  font-weight: bold;
+}
+
+/* ====== BOTÓN ====== */
+.menu-toggle {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  z-index: 1100;
+  background-color: #212529;
+  border: none;
+  color: white;
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
+}
+
+/* ====== CONTENIDO ====== */
+.content-area {
+  margin-left: 0;
+  transition: margin-left 0.3s ease;
+}
+
+.sidebar.open ~ .content-area {
+  margin-left: 250px;
+}
+
+/* Loginnnn*/
+
+
+/* Fondo semi-transparente del modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Contenedor del modal */
+.modal-container {
+  background: #fff;
+  padding: 30px;
+  border-radius: 15px;
+  width: 400px;
+  max-width: 90%;
+  position: relative;
+  box-shadow: 0 0 20px rgba(0,0,0,0.3);
+}
+
+/* Botón de cerrar modal */
+.btn-cerrar {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #ff5f5f;
+  border: none;
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 50%;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* Botones principales */
+.btn-principal {
+  background: linear-gradient(45deg, #6a11cb, #2575fc);
+  color: #fff;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 10px;
+  width: 100%;
+}
+
+.btn-principal:hover {
+  opacity: 0.9;
+}
+
+/* Toggle botones */
+.btn-toggle {
+  background: #f0f0f0;
+  padding: 10px 15px;
+  margin: 5px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: none;
+}
+
+.btn-toggle:hover {
+  background: #e0e0e0;
+}
+
+/* Inputs */
+input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 8px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+input:focus {
+  outline: none;
+  border-color: #2575fc;
+  box-shadow: 0 0 5px rgba(37,117,252,0.5);
+}
+
+/* Mensajes */
+.mensaje {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.mensaje.exito {
+  background: #d4edda;
+  color: #155724;
+}
+
+.mensaje.error {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+
+.solicitud-container { min-height: 100vh; padding: 20px; background-color: #f0f4f8; }
+.solicitud-card { max-width: 800px; margin: auto; background: #fff; padding: 30px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+.solicitud-header { margin-bottom: 20px; }
+.solicitud-title { font-size: 2rem; color: #4f46e5; margin-bottom: 10px; }
+.solicitud-section { margin-bottom: 30px; }
+.solicitud-input, .solicitud-select, .solicitud-textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 10px; }
+.solicitud-checkbox { margin-right: 8px; }
+.solicitud-button { background-color: #4f46e5; color: white; padding: 10px 20px; border-radius: 10px; cursor: pointer; }
+.solicitud-button:hover { background-color: #4338ca; }

@@ -4,7 +4,34 @@ import { Container, Card, Row, Col } from "react-bootstrap";
 
 function Home() {
   return (
-    <div style={{ backgroundColor: "#FAF9F6" }}>
+    <div style={{ backgroundColor: "#FAF9F6", minHeight: "100vh" }}>
+      {/* ===== Encabezado con logo ===== */}
+      <header
+        style={{
+          backgroundColor: "#BAEDB9",
+          color: "white",
+          padding: "15px 0",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "15px",
+          boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
+        }}
+      >
+        <img
+          src="/logo.jpeg"
+          alt="Logo CEMCAA"
+          style={{
+            width: "60px",
+            height: "60px",
+            borderRadius: "50%",
+            objectFit: "cover",
+            border: "2px solid white",
+          }}
+        />
+        <h2 className="fw-bold mb-0">CEMCAA</h2>
+      </header>
+
       {/* Banner principal fijo */}
       <div
         style={{
@@ -143,19 +170,7 @@ function Home() {
         </Card>
       </Container>
 
-      {/* Pie de página visual */}
-      <div
-        style={{
-          backgroundColor: "#E07A5F",
-          color: "white",
-          padding: "20px 0",
-          textAlign: "center",
-        }}
-      >
-        <p className="mb-0">
-          © 2025 CEMCAA — Amor y esperanza para cada peludo 🐾
-        </p>
-      </div>
+     
     </div>
   );
 }

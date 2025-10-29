@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Card, Button, Form, Modal } from "react-bootstrap";
+import { Container, Row, Col, Card, Button, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import Axios from "axios";
 import Swal from "sweetalert2";
@@ -8,28 +8,32 @@ import "../App.css";
 function Catalogo() {
   const navigate = useNavigate();
   const imagenPredeterminada =
-    "https://www.shutterstock.com/es/image-vector/image-coming-soon-no-picture-video-2450891047";
+    "https://www.shutterstock.com/image-vector/image-coming-soon-no-picture-video-2450891047";
 
   const [mascotas, setMascotas] = useState([]);
-  const [mascotasPerdidas, setMascotasPerdidas] = useState([]);
   const [filtroEstatus, setFiltroEstatus] = useState("");
-
-  // Estados del modal de aviso
-  const [mostrarModal, setMostrarModal] = useState(false);
-  const [mascotaSeleccionada, setMascotaSeleccionada] = useState(null);
-  const [nombreContacto, setNombreContacto] = useState("");
-  const [telefonoContacto, setTelefonoContacto] = useState("");
-  const [ubicacion, setUbicacion] = useState("");
-  const [descripcion, setDescripcion] = useState("");
-  const [seLoLlevo, setSeLoLlevo] = useState(false);
-  const [fechaAvistamiento, setFechaAvistamiento] = useState("");
+  const [busqueda, setBusqueda] = useState("");
+  const [usuario, setUsuario] = useState(null); // usuario logueado
 
   useEffect(() => {
     getMascotas();
-    getMascotasPerdidas();
+    verificarUsuario();
   }, []);
 
-  // 🔹 Cargar mascotas en adopción
+  // ✅ Verificar tipo de usuario logueado
+  const verificarUsuario = async () => {
+    try {
+      const res = await Axios.get("http://localhost:3001/usuario-actual", {
+        withCredentials: true,
+      });
+      setUsuario(res.data); // Ejemplo: { tipo: 'empleado' o 'usuario' }
+      console.log("Usuario detectado:", res.data);
+    } catch (err) {
+      console.log("No se pudo verificar usuario:", err);
+    }
+  };
+
+  // ✅ Obtener mascotas del backend
   const getMascotas = async () => {
     try {
       const res = await Axios.get("http://localhost:3001/animales");
@@ -39,17 +43,7 @@ function Catalogo() {
     }
   };
 
-  // 🔹 Cargar mascotas perdidas
-  const getMascotasPerdidas = async () => {
-    try {
-      const res = await Axios.get("http://localhost:3001/mascotas-perdidas");
-      setMascotasPerdidas(res.data);
-    } catch (err) {
-      console.log("Error al obtener mascotas perdidas:", err);
-    }
-  };
-
-  // 🔹 Eliminar mascota (solo adopción)
+  // ✅ Eliminar mascota
   const eliminarMascota = (Id, nombre) => {
     Swal.fire({
       title: `¿Eliminar a ${nombre}?`,
@@ -82,61 +76,14 @@ function Catalogo() {
     });
   };
 
-  // 🔹 Abrir modal para aviso
-  const abrirModalAviso = (mascota) => {
-    setMascotaSeleccionada(mascota);
-    setMostrarModal(true);
-  };
-
-  // 🔹 Enviar aviso real
-  const enviarAviso = async () => {
-    if (!nombreContacto || !telefonoContacto || !ubicacion || !fechaAvistamiento) {
-      Swal.fire({
-        icon: "warning",
-        title: "Campos obligatorios",
-        text: "Completa todos los campos requeridos antes de enviar el aviso.",
-      });
-      return;
-    }
-
-    try {
-      await Axios.post("http://localhost:3001/avistamientos/create", {
-        mascota_id: mascotaSeleccionada.id,
-        nombre_contacto: nombreContacto,
-        telefono_contacto: telefonoContacto,
-        ubicacion_avistamiento: ubicacion,
-        descripcion: descripcion,
-        se_lo_llevo: seLoLlevo,
-        fecha_avistamiento: fechaAvistamiento,
-      });
-
-      Swal.fire({
-        icon: "success",
-        title: "Aviso enviado",
-        text: "Tu reporte ha sido registrado. ¡Gracias por ayudar!",
-      });
-
-      // limpiar
-      setMostrarModal(false);
-      setNombreContacto("");
-      setTelefonoContacto("");
-      setUbicacion("");
-      setDescripcion("");
-      setSeLoLlevo(false);
-      setFechaAvistamiento("");
-    } catch (err) {
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "No se pudo registrar el aviso. Intenta de nuevo.",
-      });
-    }
-  };
-
-  // 🔹 Filtrar mascotas
-  const mascotasFiltradas = mascotas.filter(
-    (m) => !filtroEstatus || m.estatus === filtroEstatus
-  );
+  // ✅ Filtrar mascotas por estatus y nombre
+  const mascotasFiltradas = mascotas.filter((m) => {
+    const coincideEstatus = !filtroEstatus || m.estatus === filtroEstatus;
+    const coincideBusqueda =
+      !busqueda ||
+      m.nombre?.toLowerCase().includes(busqueda.trim().toLowerCase());
+    return coincideEstatus && coincideBusqueda;
+  });
 
   return (
     <Container className="catalogo-container my-5">
@@ -148,6 +95,21 @@ function Catalogo() {
         >
           🐾 Catálogo de Mascotas
         </h2>
+
+        {/* 🔍 Buscador */}
+        <Form.Control
+          type="text"
+          placeholder="Buscar por nombre..."
+          value={busqueda}
+          onChange={(e) => setBusqueda(e.target.value)}
+          style={{
+            width: "250px",
+            fontSize: "1rem",
+            padding: "0.5rem 1rem",
+            borderRadius: "0.5rem",
+            border: "1px solid #d1d5db",
+          }}
+        />
 
         {/* 🟣 Filtro por estatus */}
         <Form.Select
@@ -206,6 +168,36 @@ function Catalogo() {
         🏡 Mascotas en Adopción
       </h4>
 
+        {/* 🟢 Botones solo para empleados */}
+        {usuario?.tipo === "empleado" && (
+          <div className="d-flex gap-2">
+            <Button
+              className="btn btn-primary d-flex align-items-center gap-2 shadow-sm"
+              style={{ fontWeight: "600", borderRadius: "0.5rem" }}
+              onClick={() => navigate("/form-catalogo")}
+            >
+              <i className="bi bi-plus-circle"></i> Agregar Mascota
+            </Button>
+
+            <Button
+              className="btn btn-warning d-flex align-items-center gap-2 shadow-sm"
+              style={{
+                fontWeight: "600",
+                borderRadius: "0.5rem",
+                color: "#1f2937",
+              }}
+              onClick={() => navigate("/form-mascota-perdida")}
+            >
+              <i className="bi bi-exclamation-triangle-fill"></i>{" "}
+              Publicar Mascota Perdida
+            </Button>
+          </div>
+        )}
+      </div>
+
+      {/* ===============================
+          🐶 LISTADO DE MASCOTAS
+      ================================ */}
       <Row className="g-4">
         {mascotasFiltradas.length > 0 ? (
           mascotasFiltradas.map((m) => (
@@ -258,80 +250,25 @@ function Catalogo() {
                     >
                       <i className="bi bi-heart-fill"></i> Adoptar
                     </Button>
-                    <Button
-                      className="btn btn-warning d-flex align-items-center gap-1"
-                      size="sm"
-                      onClick={() => navigate(`/form-catalogo/${m.Id}`)}
-                    >
-                      <i className="bi bi-pencil-square"></i> Editar
-                    </Button>
-                    <Button
-                      className="btn btn-danger d-flex align-items-center gap-1"
-                      size="sm"
-                      onClick={() => eliminarMascota(m.Id, m.nombre)}
-                    >
-                      <i className="bi bi-trash-fill"></i> Eliminar
-                    </Button>
-                  </div>
-                </Card.Body>
-              </Card>
-            </Col>
-          ))
-        ) : (
-          <p className="text-center mt-4 text-muted">No hay mascotas con este estatus.</p>
-        )}
-      </Row>
 
-      {/* ===============================
-          🐾 MASCOTAS PERDIDAS
-      ================================ */}
-      <h4 className="mt-5 mb-3" style={{ color: "#b45309" }}>
-        ⚠️ Mascotas Perdidas
-      </h4>
-
-      <Row className="g-4">
-        {mascotasPerdidas.length > 0 ? (
-          mascotasPerdidas.map((m) => (
-            <Col key={m.id} xs={12} sm={6} lg={4}>
-              <Card className="card-animal shadow-sm border-warning border-2 h-100" style={{ borderRadius: "0.75rem" }}>
-                <div style={{ position: "relative" }}>
-                  <Card.Img
-                    variant="top"
-                    src={m.imagen || imagenPredeterminada}
-                    alt={m.nombre_mascota}
-                    style={{
-                      height: "250px",
-                      objectFit: "cover",
-                      borderTopLeftRadius: "0.75rem",
-                      borderTopRightRadius: "0.75rem",
-                    }}
-                  />
-                  <span className="etiqueta-especie bg-warning text-dark">{m.especie || "Desconocido"}</span>
-                  <span className="position-absolute top-0 end-0 bg-danger text-white px-2 py-1 rounded-bottom-start" style={{ fontSize: "0.85rem", fontWeight: "bold" }}>
-                    {m.estado?.toUpperCase() || "PENDIENTE"}
-                  </span>
-                </div>
-
-                <Card.Body className="d-flex flex-column">
-                  <div className="contenido-scroll">
-                    <h5>{m.nombre_mascota}</h5>
-                    <ul>
-                      <li><strong>Color:</strong> {m.color || "No especificado"}</li>
-                      <li><strong>Sexo:</strong> {m.sexo || "Desconocido"}</li>
-                      <li><strong>Última ubicación:</strong> {m.ultima_ubicacion || "No indicada"}</li>
-                      <li><strong>Fecha pérdida:</strong> {m.fecha_perdida ? new Date(m.fecha_perdida).toLocaleDateString() : "No registrada"}</li>
-                    </ul>
-                    {m.descripcion && <p className="text-muted">{m.descripcion}</p>}
-                  </div>
-
-                  <div className="d-flex justify-content-end mt-auto pt-3 border-top">
-                    <Button
-                      className="btn btn-warning d-flex align-items-center gap-1"
-                      size="sm"
-                      onClick={() => abrirModalAviso(m)}
-                    >
-                      <i className="bi bi-megaphone-fill"></i> Avisar
-                    </Button>
+                    {usuario?.tipo === "empleado" && (
+                      <>
+                        <Button
+                          className="btn btn-warning d-flex align-items-center gap-1"
+                          size="sm"
+                          onClick={() => navigate(`/form-catalogo/${m.Id}`)}
+                        >
+                          <i className="bi bi-pencil-square"></i> Editar
+                        </Button>
+                        <Button
+                          className="btn btn-danger d-flex align-items-center gap-1"
+                          size="sm"
+                          onClick={() => eliminarMascota(m.Id, m.nombre)}
+                        >
+                          <i className="bi bi-trash-fill"></i> Eliminar
+                        </Button>
+                      </>
+                    )}
                   </div>
                 </Card.Body>
               </Card>
@@ -339,6 +276,9 @@ function Catalogo() {
           ))
         ) : (
           <p className="text-center mt-4 text-muted">No hay reportes de mascotas perdidas.</p>
+          <p className="text-center mt-4 text-muted">
+            No hay mascotas que coincidan con tu búsqueda o filtro.
+          </p>
         )}
       </Row>
 

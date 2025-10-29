@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 
 export default function ExpedienteClinico() {
@@ -1227,3 +1228,4 @@ export default function ExpedienteClinico() {
     </div>
   );
 }
+

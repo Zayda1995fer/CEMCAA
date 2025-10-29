@@ -1,187 +1,186 @@
-import React, { useState, useEffect } from "react";
-import Axios from "axios";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import "../App.css";
 
-function Empleados() {
+function Auth({ onLogin }) {
+  const navigate = useNavigate();
+  const [modo, setModo] = useState("login"); // 'login' o 'registroUsuario'
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [nombre, setNombre] = useState("");
-  const [edad, setEdad] = useState(0);
-  const [pais, setPais] = useState("");
-  const [cargo, setCargo] = useState("");
-  const [años, setAños] = useState(0);
-  const [id, setId] = useState(null);
-  const [editar, setEditar] = useState(false);
-  const [empleadosList, setEmpleados] = useState([]);
+  const [edad, setEdad] = useState("");
+  const [telefono, setTelefono] = useState("");
+  const [direccion, setDireccion] = useState("");
+  const [ocupacion, setOcupacion] = useState("");
+  const [horarioInicio, setHorarioInicio] = useState("");
+  const [horarioFin, setHorarioFin] = useState("");
+  const [mensaje, setMensaje] = useState("");
+  const [tipoUsuario, setTipoUsuario] = useState("");
 
-  // Crear empleado
-  const add = () => {
-    Axios.post("http://localhost:3001/create", {
-      nombre: nombre,
-      edad: edad,
-      pais: pais,
-      cargo: cargo,
-      años: años,
-    }).then(() => {
-      getEmpleados();
-      limpiarCampos();
-    });
+  // Manejo del login
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    if (!email || !password) {
+      setMensaje("Por favor, completa todos los campos.");
+      return;
+    }
+    try {
+      const res = await axios.post("http://localhost:3001/auth/login", { email, password });
+      if (res.data.tipo === "usuario") {
+        setTipoUsuario("usuario");
+        setMensaje(`Bienvenido ${res.data.usuario.nombre_completo} (Usuario)`);
+        onLogin({ tipo: "usuario", datos: res.data.usuario });
+      } else if (res.data.tipo === "empleado") {
+        setTipoUsuario("empleado");
+        setMensaje(`Bienvenido ${res.data.usuario.nombre} (Empleado)`);
+        onLogin({ tipo: "empleado", datos: res.data.usuario });
+      } else {
+        setMensaje("Tipo de usuario desconocido.");
+        return;
+      }
+      navigate("/");
+    } catch (error) {
+      if (error.response?.data?.error) setMensaje(error.response.data.error);
+      else setMensaje("Ocurrió un error al iniciar sesión.");
+      setTipoUsuario("");
+    }
   };
 
-  // Obtener empleados
-  const getEmpleados = () => {
-    Axios.get("http://localhost:3001/empleados").then((response) => {
-      setEmpleados(response.data);
-    });
+  // Registro de usuario normal
+  const handleRegistroUsuario = async (e) => {
+    e.preventDefault();
+    if (!nombre || !edad || !telefono || !email || !direccion || !ocupacion || !horarioInicio || !horarioFin || !password) {
+      setMensaje("Por favor, completa todos los campos.");
+      return;
+    }
+    try {
+      const res = await axios.post("http://localhost:3001/auth/register-usuario", {
+        nombre_completo: nombre,
+        edad,
+        telefono,
+        email,
+        direccion,
+        ocupacion,
+        horario_laboral_inicio: horarioInicio,
+        horario_laboral_fin: horarioFin,
+        password,
+      });
+      setMensaje(res.data.mensaje);
+      setTipoUsuario("usuario");
+      onLogin({ tipo: "usuario" });
+      setModo("");
+      navigate("/"); // redirigir al home
+    } catch (error) {
+      if (error.response?.data?.error) setMensaje(error.response.data.error);
+      else setMensaje("Ocurrió un error al registrar usuario.");
+    }
   };
 
-  // Actualizar empleado
-  const update = () => {
-    Axios.put("http://localhost:3001/update", {
-      id: id,
-      nombre: nombre,
-      edad: edad,
-      pais: pais,
-      cargo: cargo,
-      años: años,
-    }).then(() => {
-      getEmpleados();
-      limpiarCampos();
-      setEditar(false);
-    });
-  };
-
-  // Eliminar empleado
-  const eliminar = (id) => {
-    Axios.delete(`http://localhost:3001/delete/${id}`).then(() => {
-      getEmpleados();
-    });
-  };
-
-  // Llenar formulario con datos al editar
-  const editarEmpleado = (val) => {
-    setEditar(true);
-    setId(val.id);
-    setNombre(val.nombre);
-    setEdad(val.edad);
-    setPais(val.pais);
-    setCargo(val.cargo);
-    setAños(val.años);
-  };
-
-  // Limpiar campos
-  const limpiarCampos = () => {
-    setId(null);
+  // Cerrar modal
+  const cerrarModal = () => {
+    setModo("");
+    setMensaje("");
+    setEmail("");
+    setPassword("");
     setNombre("");
-    setEdad(0);
-    setPais("");
-    setCargo("");
-    setAños(0);
+    setEdad("");
+    setTelefono("");
+    setDireccion("");
+    setOcupacion("");
+    setHorarioInicio("");
+    setHorarioFin("");
+    setTipoUsuario("");
   };
 
-  useEffect(() => {
-    getEmpleados();
-  }, []);
+  // Abrir modal de registro de usuario desde el enlace
+  const abrirRegistroUsuario = () => {
+    setModo("registroUsuario");
+    setMensaje("");
+    setEmail("");
+    setPassword("");
+    setNombre("");
+    setEdad("");
+    setTelefono("");
+    setDireccion("");
+    setOcupacion("");
+    setHorarioInicio("");
+    setHorarioFin("");
+  };
 
   return (
-    <div className="container">
-      <div className="card text-center">
-        <div className="card-header">Gestión de Empleados</div>
-        <div className="card-body">
-          <div className="input-group mb-3">
-            <input
-              type="text"
-              placeholder="Nombre"
-              className="form-control"
-              value={nombre}
-              onChange={(e) => setNombre(e.target.value)}
-            />
-            <input
-              type="number"
-              placeholder="Edad"
-              className="form-control"
-              value={edad}
-              onChange={(e) => setEdad(e.target.value)}
-            />
-            <input
-              type="text"
-              placeholder="País"
-              className="form-control"
-              value={pais}
-              onChange={(e) => setPais(e.target.value)}
-            />
-          </div>
-
-          <div className="input-group mb-3">
-            <input
-              type="text"
-              placeholder="Cargo"
-              className="form-control"
-              value={cargo}
-              onChange={(e) => setCargo(e.target.value)}
-            />
-            <input
-              type="number"
-              placeholder="Años de experiencia"
-              className="form-control"
-              value={años}
-              onChange={(e) => setAños(e.target.value)}
-            />
-          </div>
-
-          {editar ? (
-            <div>
-              <button className="btn btn-warning m-2" onClick={update}>
-                Actualizar
+    <div className="App">
+      <main>
+        {/* Modal LOGIN o REGISTRO */}
+        {(modo === "login" || modo === "registroUsuario") && (
+          <div className="modal-overlay">
+            <div className="modal-container">
+              <button className="btn-cerrar" onClick={cerrarModal}>
+                X
               </button>
-              <button className="btn btn-secondary m-2" onClick={limpiarCampos}>
-                Cancelar
-              </button>
+
+              {modo === "login" && (
+                <form className="datos login-form" onSubmit={handleLogin}>
+                  <h2>Iniciar Sesión</h2>
+                  <input
+                    type="email"
+                    placeholder="Correo electrónico"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                  <input
+                    type="password"
+                    placeholder="Contraseña"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                  <button type="submit" className="btn-principal">
+                    Ingresar
+                  </button>
+
+                  <p style={{ marginTop: "10px" }}>
+                    ¿No tienes cuenta?{" "}
+                    <span
+                      onClick={abrirRegistroUsuario}
+                      style={{ color: "#007bff", cursor: "pointer", textDecoration: "none" }}
+                    >
+                      Regístrate aquí
+                    </span>
+                  </p>
+                </form>
+              )}
+
+              {modo === "registroUsuario" && (
+                <form className="datos login-form" onSubmit={handleRegistroUsuario}>
+                  <h2>Mi Registro</h2>
+                  <input type="text" placeholder="Nombre completo" value={nombre} onChange={(e) => setNombre(e.target.value)} required />
+                  <input type="number" placeholder="Edad" value={edad} onChange={(e) => setEdad(e.target.value)} required />
+                  <input type="text" placeholder="Teléfono" value={telefono} onChange={(e) => setTelefono(e.target.value)} required />
+                  <input type="email" placeholder="Correo electrónico" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                  <input type="text" placeholder="Dirección" value={direccion} onChange={(e) => setDireccion(e.target.value)} required />
+                  <input type="text" placeholder="Ocupación" value={ocupacion} onChange={(e) => setOcupacion(e.target.value)} required />
+                  <input type="time" placeholder="Horario inicio" value={horarioInicio} onChange={(e) => setHorarioInicio(e.target.value)} required />
+                  <input type="time" placeholder="Horario fin" value={horarioFin} onChange={(e) => setHorarioFin(e.target.value)} required />
+                  <input type="password" placeholder="Contraseña" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                  <button type="submit" className="btn-principal">
+                    Registrar Usuario
+                  </button>
+                </form>
+              )}
+
+              {mensaje && (
+                <p className={`mensaje ${tipoUsuario === "usuario" ? "exito" : "error"}`}>
+                  {mensaje}
+                </p>
+              )}
             </div>
-          ) : (
-            <button className="btn btn-success" onClick={add}>
-              Registrar
-            </button>
-          )}
-        </div>
-      </div>
-
-      <table className="table table-striped mt-4">
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Edad</th>
-            <th>País</th>
-            <th>Cargo</th>
-            <th>Años</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {empleadosList.map((val) => (
-            <tr key={val.id}>
-              <td>{val.nombre}</td>
-              <td>{val.edad}</td>
-              <td>{val.pais}</td>
-              <td>{val.cargo}</td>
-              <td>{val.años}</td>
-              <td>
-                <button
-                  className="btn btn-info m-1"
-                  onClick={() => editarEmpleado(val)}
-                >
-                  Editar
-                </button>
-                <button
-                  className="btn btn-danger m-1"
-                  onClick={() => eliminar(val.id)}
-                >
-                  Eliminar
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+          </div>
+        )}
+      </main>
     </div>
   );
 }
 
-export default Empleados;
+export default Auth;

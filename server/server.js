@@ -24,7 +24,15 @@ const adopcionRoutes = require("./routes/adopcionRoutes");
 const authRoutes = require("./routes/authRoutes");
 const mascotasPerdidasRoutes = require("./routes/mascotasPerdidasRoutes");
 const avistamientosRoutes = require("./routes/avistamientosRoutes");
-const expedienteClinicoRoutes = require("./routes/expedienteClinicoRoutes");
+
+// ==============================
+// 🩺 IMPORTAR RUTAS DEL EXPEDIENTE CLÍNICO
+// ==============================
+const historialVidaRoutes = require("./routes/historialVidaRoutes");
+const saludRoutes = require("./routes/saludRoutes");
+const vacunasRoutes = require("./routes/vacunasRoutes");
+const desparasitacionesRoutes = require("./routes/desparasitacionesRoutes");
+const comportamientoRoutes = require("./routes/comportamientoRoutes");
 
 // ==============================
 // 🚏 USAR RUTAS PRINCIPALES
@@ -35,7 +43,7 @@ app.use("/adopcion", adopcionRoutes);
 app.use("/auth", authRoutes);
 app.use("/mascotas-perdidas", mascotasPerdidasRoutes);
 app.use("/avistamientos", avistamientosRoutes);
-app.use("/expediente-medico", expedienteClinicoRoutes);
+
 
 // ==============================
 // 🌐 RUTA DE PRUEBA / STATUS
@@ -53,7 +61,7 @@ app.get("/", (req, res) => {
         "/auth",
         "/mascotas-perdidas",
         "/avistamientos",
-        "/expediente-medico",
+
       ],
     },
   });
@@ -86,5 +94,8 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 3001;
 
 app.listen(PORT, () => {
+  console.log("=====================================");
   console.log(`🚀 Servidor corriendo en puerto ${PORT}`);
+  console.log("✅ API CEMCAA lista para recibir peticiones");
+  console.log("=====================================");
 });
