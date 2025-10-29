@@ -126,6 +126,8 @@ function Catalogo() {
             color: "#374151",
             backgroundColor: "#fff",
           }}
+          onFocus={(e) => (e.target.style.borderColor = "#4f46e5")}
+          onBlur={(e) => (e.target.style.borderColor = "#d1d5db")}
         >
           <option value="">Todos los estatus</option>
           <option value="En adopción">En adopción</option>
@@ -133,6 +135,38 @@ function Catalogo() {
           <option value="Perdido">Perdido</option>
           <option value="Entregado">Entregado</option>
         </Form.Select>
+
+        {/* 🟢 Botones */}
+        <div className="d-flex gap-2">
+          <Button
+            className="btn btn-primary d-flex align-items-center gap-2 shadow-sm"
+            style={{ fontWeight: "600", borderRadius: "0.5rem" }}
+            onClick={() => navigate("/form-catalogo")}
+          >
+            <i className="bi bi-plus-circle"></i> Agregar Mascota
+          </Button>
+
+          <Button
+            className="btn btn-warning d-flex align-items-center gap-2 shadow-sm"
+            style={{
+              fontWeight: "600",
+              borderRadius: "0.5rem",
+              color: "#1f2937",
+            }}
+            onClick={() => navigate("/form-mascota-perdida")}
+          >
+            <i className="bi bi-exclamation-triangle-fill"></i>{" "}
+            Publicar Mascota Perdida
+          </Button>
+        </div>
+      </div>
+
+      {/* ===============================
+          🐶 MASCOTAS EN ADOPCIÓN
+      ================================ */}
+      <h4 className="mb-3" style={{ color: "#374151" }}>
+        🏡 Mascotas en Adopción
+      </h4>
 
         {/* 🟢 Botones solo para empleados */}
         {usuario?.tipo === "empleado" && (
@@ -168,11 +202,11 @@ function Catalogo() {
         {mascotasFiltradas.length > 0 ? (
           mascotasFiltradas.map((m) => (
             <Col key={m.Id} xs={12} sm={6} lg={4}>
-              <Card className="card-animal position-relative shadow-sm border-0 h-100">
+              <Card className="card-animal position-relative shadow-sm border-0">
                 <div style={{ position: "relative" }}>
                   <Card.Img
                     variant="top"
-                    src={m.imagen || m.imagenMain || imagenPredeterminada}
+                    src={m.imagenMain || imagenPredeterminada}
                     alt={m.nombre}
                     style={{
                       height: "250px",
@@ -241,11 +275,82 @@ function Catalogo() {
             </Col>
           ))
         ) : (
+          <p className="text-center mt-4 text-muted">No hay reportes de mascotas perdidas.</p>
           <p className="text-center mt-4 text-muted">
             No hay mascotas que coincidan con tu búsqueda o filtro.
           </p>
         )}
       </Row>
+
+      {/* 🪟 MODAL DE AVISO */}
+      <Modal show={mostrarModal} onHide={() => setMostrarModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>
+            📢 Avisar sobre {mascotaSeleccionada?.nombre_mascota}
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group className="mb-3">
+              <Form.Label>Tu nombre</Form.Label>
+              <Form.Control
+                type="text"
+                value={nombreContacto}
+                onChange={(e) => setNombreContacto(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Teléfono o WhatsApp</Form.Label>
+              <Form.Control
+                type="text"
+                value={telefonoContacto}
+                onChange={(e) => setTelefonoContacto(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>¿Dónde la viste?</Form.Label>
+              <Form.Control
+                type="text"
+                value={ubicacion}
+                onChange={(e) => setUbicacion(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>📅 Fecha del avistamiento</Form.Label>
+              <Form.Control
+                type="date"
+                value={fechaAvistamiento}
+                onChange={(e) => setFechaAvistamiento(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Descripción adicional</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                value={descripcion}
+                onChange={(e) => setDescripcion(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Check
+                type="checkbox"
+                label="✅ Tengo a la mascota conmigo"
+                checked={seLoLlevo}
+                onChange={(e) => setSeLoLlevo(e.target.checked)}
+              />
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setMostrarModal(false)}>
+            Cancelar
+          </Button>
+          <Button variant="primary" onClick={enviarAviso}>
+            Enviar Aviso
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 }
