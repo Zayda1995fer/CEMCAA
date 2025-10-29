@@ -1,7 +1,7 @@
 const db = require("../config/database");
 
 const animalesController = {
-  // Crear animal
+  // 🟢 Crear animal
   crear: (req, res) => {
     const {
       nombre,
@@ -13,6 +13,7 @@ const animalesController = {
       marcas,
       rasgos,
       descripcion,
+      estatus, // nuevo campo
     } = req.body;
 
     const imagenFinal = req.file
@@ -21,11 +22,12 @@ const animalesController = {
 
     const edadFinal = edadAprox || "Desconocida";
     const tamañoFinal = tamaño || "Mediano";
+    const estatusFinal = estatus || "En adopción";
 
     db.query(
       `INSERT INTO animales
-      (nombre, especie, raza, sexo, edadAprox, tamaño, marcas, rasgos, descripcion, imagenMain)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        (nombre, especie, raza, sexo, edadAprox, tamaño, marcas, rasgos, descripcion, imagenMain, estatus)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         nombre,
         especie,
@@ -37,32 +39,33 @@ const animalesController = {
         rasgos || "",
         descripcion || "",
         imagenFinal,
+        estatusFinal,
       ],
       (err, result) => {
         if (err) {
-          console.log(err);
+          console.error(err);
           return res.status(500).json({ error: "Error al registrar el animal" });
         }
-        res.json({ 
+        res.json({
           mensaje: "Animal registrado con éxito",
-          id: result.insertId 
+          id: result.insertId,
         });
       }
     );
   },
 
-  // Obtener todos los animales
+  // 🟡 Obtener todos los animales
   obtenerTodos: (req, res) => {
     db.query("SELECT * FROM animales", (err, result) => {
       if (err) {
-        console.log(err);
+        console.error(err);
         return res.status(500).json({ error: "Error al obtener los animales" });
       }
       res.json(result);
     });
   },
 
-  // Actualizar animal
+  // 🟠 Actualizar animal
   actualizar: (req, res) => {
     const {
       Id,
@@ -76,6 +79,7 @@ const animalesController = {
       rasgos,
       descripcion,
       imagenMain,
+      estatus, // nuevo campo
     } = req.body;
 
     const imagenFinal = req.file
@@ -84,10 +88,11 @@ const animalesController = {
 
     const edadFinal = edadAprox || "Desconocida";
     const tamañoFinal = tamaño || "Mediano";
+    const estatusFinal = estatus || "En adopción";
 
     db.query(
       `UPDATE animales 
-       SET nombre=?, especie=?, raza=?, sexo=?, edadAprox=?, tamaño=?, marcas=?, rasgos=?, descripcion=?, imagenMain=?
+       SET nombre=?, especie=?, raza=?, sexo=?, edadAprox=?, tamaño=?, marcas=?, rasgos=?, descripcion=?, imagenMain=?, estatus=?
        WHERE Id=?`,
       [
         nombre,
@@ -100,11 +105,12 @@ const animalesController = {
         rasgos || "",
         descripcion || "",
         imagenFinal,
+        estatusFinal,
         Id,
       ],
       (err, result) => {
         if (err) {
-          console.log(err);
+          console.error(err);
           return res.status(500).json({ error: "Error al actualizar el animal" });
         }
         res.json({ mensaje: "Animal actualizado con éxito" });
@@ -112,13 +118,13 @@ const animalesController = {
     );
   },
 
-  // Eliminar animal
+  // 🔴 Eliminar animal
   eliminar: (req, res) => {
     const { Id } = req.params;
 
     db.query("DELETE FROM animales WHERE Id=?", [Id], (err, result) => {
       if (err) {
-        console.log(err);
+        console.error(err);
         return res.status(500).json({ error: "Error al eliminar el animal" });
       }
       res.json({ mensaje: "Animal eliminado con éxito" });

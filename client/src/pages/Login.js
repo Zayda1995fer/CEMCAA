@@ -1,257 +1,186 @@
-const express = require('express');
-const mysql = require('mysql2');
-const cors = require('cors');
-const bcrypt = require('bcrypt');
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import "../App.css";
 
-const app = express();
+function Auth({ onLogin }) {
+  const navigate = useNavigate();
+  const [modo, setModo] = useState("login"); // 'login' o 'registroUsuario'
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [nombre, setNombre] = useState("");
+  const [edad, setEdad] = useState("");
+  const [telefono, setTelefono] = useState("");
+  const [direccion, setDireccion] = useState("");
+  const [ocupacion, setOcupacion] = useState("");
+  const [horarioInicio, setHorarioInicio] = useState("");
+  const [horarioFin, setHorarioFin] = useState("");
+  const [mensaje, setMensaje] = useState("");
+  const [tipoUsuario, setTipoUsuario] = useState("");
 
-
-// Login para empleados
-app.post('/login/empleado', async (req, res) => {
-  const { email, password } = req.body;
-
-  if (!email || !password) {
-    return res.status(400).json({ 
-      success: false, 
-      message: 'Email y contraseña son requeridos' 
-    });
-  }
-
-  const sql = 'SELECT * FROM empleados WHERE email = ?';
-  
-  db.query(sql, [email], async (err, result) => {
-    if (err) {
-      console.error('Error en la consulta:', err);
-      return res.status(500).json({ 
-        success: false, 
-        message: 'Error en el servidor' 
-      });
+  // Manejo del login
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    if (!email || !password) {
+      setMensaje("Por favor, completa todos los campos.");
+      return;
     }
-
-    if (result.length === 0) {
-      return res.status(401).json({ 
-        success: false, 
-        message: 'Credenciales incorrectas' 
-      });
-    }
-
-    const empleado = result[0];
-    
-    // Comparar contraseñas (si están hasheadas con bcrypt)
     try {
-      const passwordMatch = await bcrypt.compare(password, empleado.password);
-      
-      if (passwordMatch) {
-        return res.json({
-          success: true,
-          tipo: 'empleado',
-          usuario: {
-            id: empleado.id,
-            nombre: empleado.nombre,
-            email: empleado.email,
-            cargo: empleado.cargo,
-            edad: empleado.edad,
-            pais: empleado.pais,
-            años: empleado.años
-          }
-        });
+      const res = await axios.post("http://localhost:3001/auth/login", { email, password });
+      if (res.data.tipo === "usuario") {
+        setTipoUsuario("usuario");
+        setMensaje(`Bienvenido ${res.data.usuario.nombre_completo} (Usuario)`);
+        onLogin({ tipo: "usuario", datos: res.data.usuario });
+      } else if (res.data.tipo === "empleado") {
+        setTipoUsuario("empleado");
+        setMensaje(`Bienvenido ${res.data.usuario.nombre} (Empleado)`);
+        onLogin({ tipo: "empleado", datos: res.data.usuario });
       } else {
-        return res.status(401).json({ 
-          success: false, 
-          message: 'Credenciales incorrectas' 
-        });
+        setMensaje("Tipo de usuario desconocido.");
+        return;
       }
+      navigate("/");
     } catch (error) {
-      // Si la contraseña no está hasheada, comparar directamente
-      if (password === empleado.password) {
-        return res.json({
-          success: true,
-          tipo: 'empleado',
-          usuario: {
-            id: empleado.id,
-            nombre: empleado.nombre,
-            email: empleado.email,
-            cargo: empleado.cargo,
-            edad: empleado.edad,
-            pais: empleado.pais,
-            años: empleado.años
-          }
-        });
-      } else {
-        return res.status(401).json({ 
-          success: false, 
-          message: 'Credenciales incorrectas' 
-        });
-      }
+      if (error.response?.data?.error) setMensaje(error.response.data.error);
+      else setMensaje("Ocurrió un error al iniciar sesión.");
+      setTipoUsuario("");
     }
-  });
-});
+  };
 
-// Login para usuarios
-app.post('/login/usuario', async (req, res) => {
-  const { email, password } = req.body;
-
-  if (!email || !password) {
-    return res.status(400).json({ 
-      success: false, 
-      message: 'Email y contraseña son requeridos' 
-    });
-  }
-
-  const sql = 'SELECT * FROM usuarios WHERE email = ?';
-  
-  db.query(sql, [email], async (err, result) => {
-    if (err) {
-      console.error('Error en la consulta:', err);
-      return res.status(500).json({ 
-        success: false, 
-        message: 'Error en el servidor' 
-      });
+  // Registro de usuario normal
+  const handleRegistroUsuario = async (e) => {
+    e.preventDefault();
+    if (!nombre || !edad || !telefono || !email || !direccion || !ocupacion || !horarioInicio || !horarioFin || !password) {
+      setMensaje("Por favor, completa todos los campos.");
+      return;
     }
-
-    if (result.length === 0) {
-      return res.status(401).json({ 
-        success: false, 
-        message: 'Credenciales incorrectas' 
-      });
-    }
-
-    const usuario = result[0];
-    
-    // Comparar contraseñas (si están hasheadas con bcrypt)
     try {
-      const passwordMatch = await bcrypt.compare(password, usuario.password);
-      
-      if (passwordMatch) {
-        return res.json({
-          success: true,
-          tipo: 'usuario',
-          usuario: {
-            id: usuario.id,
-            nombre_completo: usuario.nombre_completo,
-            email: usuario.email,
-            edad: usuario.edad,
-            telefono: usuario.telefono,
-            direccion: usuario.direccion,
-            ocupacion: usuario.ocupacion
-          }
-        });
-      } else {
-        return res.status(401).json({ 
-          success: false, 
-          message: 'Credenciales incorrectas' 
-        });
-      }
-    } catch (error) {
-      // Si la contraseña no está hasheada, comparar directamente
-      if (password === usuario.password) {
-        return res.json({
-          success: true,
-          tipo: 'usuario',
-          usuario: {
-            id: usuario.id,
-            nombre_completo: usuario.nombre_completo,
-            email: usuario.email,
-            edad: usuario.edad,
-            telefono: usuario.telefono,
-            direccion: usuario.direccion,
-            ocupacion: usuario.ocupacion
-          }
-        });
-      } else {
-        return res.status(401).json({ 
-          success: false, 
-          message: 'Credenciales incorrectas' 
-        });
-      }
-    }
-  });
-});
-
-// ====================================
-// RUTAS DE REGISTRO
-// ====================================
-
-// Registro de usuarios
-app.post('/register/usuario', async (req, res) => {
-  const {
-    nombre_completo,
-    edad,
-    telefono,
-    email,
-    direccion,
-    ocupacion,
-    horario_laboral_inicio,
-    horario_laboral_fin,
-    password
-  } = req.body;
-
-  // Validaciones
-  if (!nombre_completo || !edad || !telefono || !email || !direccion || !ocupacion || !password) {
-    return res.status(400).json({ 
-      success: false, 
-      message: 'Todos los campos obligatorios deben ser completados' 
-    });
-  }
-
-  // Validar formato de email
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) {
-    return res.status(400).json({ 
-      success: false, 
-      message: 'Email inválido' 
-    });
-  }
-
-  // Verificar si el email ya existe
-  const checkEmailSql = 'SELECT * FROM usuarios WHERE email = ?';
-  
-  db.query(checkEmailSql, [email], async (err, result) => {
-    if (err) {
-      console.error('Error verificando email:', err);
-      return res.status(500).json({ 
-        success: false, 
-        message: 'Error en el servidor' 
-      });
-    }
-
-    if (result.length > 0) {
-      return res.status(409).json({ 
-        success: false, 
-        message: 'Este email ya está registrado' 
-      });
-    }
-
-    // Hashear la contraseña
-    try {
-      const hashedPassword = await bcrypt.hash(password, 10);
-
-      const insertSql = `
-        INSERT INTO usuarios 
-        (nombre_completo, edad, telefono, email, direccion, ocupacion, 
-         horario_laboral_inicio, horario_laboral_fin, password, fecha_registro) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
-      `;
-
-      const values = [
-        nombre_completo,
+      const res = await axios.post("http://localhost:3001/auth/register-usuario", {
+        nombre_completo: nombre,
         edad,
         telefono,
         email,
         direccion,
         ocupacion,
-        horario_laboral_inicio || null,
-        horario_laboral_fin || null,
-        hashedPassword
-      ];
+        horario_laboral_inicio: horarioInicio,
+        horario_laboral_fin: horarioFin,
+        password,
+      });
+      setMensaje(res.data.mensaje);
+      setTipoUsuario("usuario");
+      onLogin({ tipo: "usuario" });
+      setModo("");
+      navigate("/"); // redirigir al home
+    } catch (error) {
+      if (error.response?.data?.error) setMensaje(error.response.data.error);
+      else setMensaje("Ocurrió un error al registrar usuario.");
+    }
+  };
 
-      db.query(insertSql, values, (err, result) => {
-        if (err) {
-          console.error('Error insertando usuario:', err);
-          return res.status(500).json({ 
-            success: false, 
-            message: 'Error al registrar usuario' 
-          });
-       }
+  // Cerrar modal
+  const cerrarModal = () => {
+    setModo("");
+    setMensaje("");
+    setEmail("");
+    setPassword("");
+    setNombre("");
+    setEdad("");
+    setTelefono("");
+    setDireccion("");
+    setOcupacion("");
+    setHorarioInicio("");
+    setHorarioFin("");
+    setTipoUsuario("");
+  };
 
-        res
+  // Abrir modal de registro de usuario desde el enlace
+  const abrirRegistroUsuario = () => {
+    setModo("registroUsuario");
+    setMensaje("");
+    setEmail("");
+    setPassword("");
+    setNombre("");
+    setEdad("");
+    setTelefono("");
+    setDireccion("");
+    setOcupacion("");
+    setHorarioInicio("");
+    setHorarioFin("");
+  };
+
+  return (
+    <div className="App">
+      <main>
+        {/* Modal LOGIN o REGISTRO */}
+        {(modo === "login" || modo === "registroUsuario") && (
+          <div className="modal-overlay">
+            <div className="modal-container">
+              <button className="btn-cerrar" onClick={cerrarModal}>
+                X
+              </button>
+
+              {modo === "login" && (
+                <form className="datos login-form" onSubmit={handleLogin}>
+                  <h2>Iniciar Sesión</h2>
+                  <input
+                    type="email"
+                    placeholder="Correo electrónico"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                  <input
+                    type="password"
+                    placeholder="Contraseña"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                  <button type="submit" className="btn-principal">
+                    Ingresar
+                  </button>
+
+                  <p style={{ marginTop: "10px" }}>
+                    ¿No tienes cuenta?{" "}
+                    <span
+                      onClick={abrirRegistroUsuario}
+                      style={{ color: "#007bff", cursor: "pointer", textDecoration: "none" }}
+                    >
+                      Regístrate aquí
+                    </span>
+                  </p>
+                </form>
+              )}
+
+              {modo === "registroUsuario" && (
+                <form className="datos login-form" onSubmit={handleRegistroUsuario}>
+                  <h2>Mi Registro</h2>
+                  <input type="text" placeholder="Nombre completo" value={nombre} onChange={(e) => setNombre(e.target.value)} required />
+                  <input type="number" placeholder="Edad" value={edad} onChange={(e) => setEdad(e.target.value)} required />
+                  <input type="text" placeholder="Teléfono" value={telefono} onChange={(e) => setTelefono(e.target.value)} required />
+                  <input type="email" placeholder="Correo electrónico" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                  <input type="text" placeholder="Dirección" value={direccion} onChange={(e) => setDireccion(e.target.value)} required />
+                  <input type="text" placeholder="Ocupación" value={ocupacion} onChange={(e) => setOcupacion(e.target.value)} required />
+                  <input type="time" placeholder="Horario inicio" value={horarioInicio} onChange={(e) => setHorarioInicio(e.target.value)} required />
+                  <input type="time" placeholder="Horario fin" value={horarioFin} onChange={(e) => setHorarioFin(e.target.value)} required />
+                  <input type="password" placeholder="Contraseña" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                  <button type="submit" className="btn-principal">
+                    Registrar Usuario
+                  </button>
+                </form>
+              )}
+
+              {mensaje && (
+                <p className={`mensaje ${tipoUsuario === "usuario" ? "exito" : "error"}`}>
+                  {mensaje}
+                </p>
+              )}
+            </div>
+          </div>
+        )}
+      </main>
+    </div>
+  );
+}
+
+export default Auth;
