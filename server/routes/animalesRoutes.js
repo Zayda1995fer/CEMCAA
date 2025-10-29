@@ -3,6 +3,7 @@ const router = express.Router();
 const animalesController = require("../controllers/animalesController");
 const upload = require("../middleware/upload");
 
+// CRUD rutas
 router.post("/create", upload.single("imagenMain"), animalesController.crear);
 router.get("/", animalesController.obtenerTodos);
 router.put("/update", upload.single("imagenMain"), animalesController.actualizar);
