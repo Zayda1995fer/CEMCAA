@@ -4,7 +4,7 @@
 
 /* Fuente y fondo general */
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   background: linear-gradient(to bottom right, #eff6ff, #e0e7ff);
   color: #1f2937;
   margin: 0;
@@ -401,6 +401,585 @@ main {
     transform: translateY(0);
   }
 }
+
+/* ====================================
+   ESTILOS GLOBALES - APLICACIÓN CEMCAA
+   ==================================== */
+
+/* Fuente y fondo general */
+body {
+  font-family: "Inter", sans-serif;
+  background: linear-gradient(to bottom right, #eff6ff, #e0e7ff);
+  color: #1f2937;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+/* Contenedor principal */
+.App {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  flex: 1 0 auto;
+}
+
+/* =============================
+   SECCIÓN DE DATOS (formularios)
+   ============================= */
+.datos {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 2rem 1rem;
+  background-color: #f9fafb;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.datos input {
+  width: 300px;
+  height: 40px;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  margin: 0.5rem;
+  border: 1px solid #d1d5db;
+  transition: all 0.2s;
+}
+
+.datos input:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.datos button {
+  width: 320px;
+  height: 45px;
+  margin-top: 0.5rem;
+  background-color: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.datos button:hover {
+  background-color: #4338ca;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* =============================
+   BOTONES ESTÁNDAR
+   ============================= */
+.btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary {
+  background-color: #4f46e5;
+  color: white;
+}
+.btn-primary:hover {
+  background-color: #4338ca;
+}
+
+.btn-success {
+  background-color: #059669;
+  color: white;
+}
+.btn-success:hover {
+  background-color: #047857;
+}
+
+.btn-warning {
+  background-color: #fbbf24;
+  color: #1f2937;
+}
+.btn-warning:hover {
+  background-color: #f59e0b;
+}
+
+.btn-danger {
+  background-color: #dc2626;
+  color: white;
+}
+.btn-danger:hover {
+  background-color: #b91c1c;
+}
+/* =============================
+   EXPEDIENTE CLÍNICO DIGITAL
+   ============================= */
+.expediente-container {
+  background: linear-gradient(to bottom right, #eef2ff, #e0e7ff);
+  min-height: 100vh;
+  padding: 2rem 0;
+}
+
+/* Tarjeta general */
+.expediente-card {
+  border-radius: 1rem;
+  background-color: white;
+  min-height: 85vh;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  padding: 2rem;
+}
+
+/* Secciones genéricas */
+.expediente-section {
+  animation: fadeIn 0.3s ease-in-out;
+  color: #374151;
+}
+
+/* =============================
+   LISTADO COMPACTO DE EXPEDIENTES
+   ============================= */
+.expediente-listado {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem;
+}
+
+.expediente-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  padding: 1rem 1.5rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-left: 5px solid #4f46e5;
+}
+
+.expediente-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08);
+}
+
+/* Imagen miniatura */
+.expediente-miniatura {
+  width: 90px;
+  height: 90px;
+  border-radius: 0.75rem;
+  object-fit: cover;
+  margin-right: 1.25rem;
+  flex-shrink: 0;
+  border: 2px solid #e5e7eb;
+}
+
+/* Información */
+.expediente-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.95rem;
+  color: #374151;
+}
+
+.expediente-info h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.ultima-revision {
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+/* =============================
+   ETIQUETAS DE ESTATUS (COLOREADAS)
+   ============================= */
+.etiqueta-estatus {
+  display: inline-block;
+  padding: 0.25rem 0.7rem;
+  border-radius: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: white !important;
+  text-transform: capitalize;
+  margin-left: 0.25rem;
+  min-width: 110px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* Colores según estatus */
+.etiqueta-estatus.en-adopcion,
+.etiqueta-estatus.en-adopción {
+  background-color: #10b981;
+}
+
+.etiqueta-estatus.perdido {
+  background-color: #ef4444;
+}
+
+.etiqueta-estatus.adoptado {
+  background-color: #3b82f6;
+}
+
+.etiqueta-estatus.entregado {
+  background-color: #f59e0b;
+}
+
+/* =============================
+   BOTONES DENTRO DE TARJETAS
+   ============================= */
+.expediente-acciones {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+@media (max-width: 768px) {
+  .expediente-item {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .expediente-miniatura {
+    margin-bottom: 0.5rem;
+  }
+
+  .expediente-acciones {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+}
+
+/* =============================
+   ANIMACIONES
+   ============================= */
+.fade-in {
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =============================
+   🩺 FORMULARIO DE EXPEDIENTE
+   ============================= */
+.formulario-expediente {
+  background-color: #ffffff;
+  border-radius: 1rem;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+  padding: 2rem 2.5rem;
+  margin: 2rem auto;
+  max-width: 1000px;
+  border-left: 6px solid #4f46e5;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.formulario-expediente h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #4f46e5;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.form-section {
+  background-color: #f9fafb;
+  border-radius: 0.75rem;
+  padding: 1.25rem 1.5rem;
+  box-shadow: inset 0 1px 6px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  transition: all 0.2s ease;
+}
+.form-section:hover {
+  background-color: #f3f4f6;
+}
+
+.form-section h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #4f46e5;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  border-left: 4px solid #4f46e5;
+  padding-left: 0.5rem;
+}
+
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.2rem;
+  justify-content: space-between;
+}
+
+.form-group {
+  flex: 1;
+  min-width: 260px;
+  display: flex;
+  flex-direction: column;
+}
+
+.formulario-expediente label {
+  font-weight: 600;
+  color: #1f2937;
+  font-size: 0.9rem;
+  margin-bottom: 0.35rem;
+}
+
+.formulario-expediente input,
+.formulario-expediente select,
+.formulario-expediente textarea {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  padding: 0.65rem 0.8rem;
+  font-size: 0.95rem;
+  color: #1f2937;
+  background-color: #ffffff;
+  transition: all 0.2s ease;
+}
+
+.formulario-expediente input:focus,
+.formulario-expediente select:focus,
+.formulario-expediente textarea:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.formulario-expediente textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* =============================
+   ⚙️ BOTONES
+   ============================= */
+.btn-row {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.btn-accion {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.btn-accion.agregar {
+  background-color: #4f46e5;
+  color: white;
+}
+.btn-accion.agregar:hover {
+  background-color: #4338ca;
+  transform: translateY(-2px);
+}
+.btn-accion.eliminar {
+  background-color: #dc2626;
+  color: white;
+}
+.btn-accion.eliminar:hover {
+  background-color: #b91c1c;
+  transform: translateY(-2px);
+}
+
+/* =============================
+   📋 VISUALIZAR EXPEDIENTE (MEJORADO)
+   ============================= */
+.visualizar-expediente {
+  background-color: #ffffff;
+  border-radius: 1rem;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+  padding: 2.5rem;
+  margin: 2rem auto;
+  max-width: 1100px;
+  border-left: 6px solid #4f46e5;
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+.visualizar-expediente h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #4f46e5;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.visualizar-expediente .foto-expediente {
+  display: block;
+  width: 180px;
+  height: 180px;
+  border-radius: 1rem;
+  object-fit: cover;
+  margin: 0 auto 1.5rem;
+  border: 4px solid #e0e7ff;
+  box-shadow: 0 4px 10px rgba(79, 70, 229, 0.2);
+}
+
+/* Tarjetas separadas */
+.expediente-seccion {
+  background-color: #f9fafb;
+  border-radius: 0.9rem;
+  padding: 1.75rem 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+  border-left: 6px solid #6366f1;
+  transition: all 0.3s ease;
+}
+
+.expediente-seccion:hover {
+  transform: translateY(-3px);
+  background-color: #f3f4f6;
+}
+
+.expediente-seccion h3 {
+  font-size: 1.2rem;
+  color: #4f46e5;
+  font-weight: 700;
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.expediente-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem 1.25rem;
+}
+
+.expediente-grid p {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 0.7rem 1rem;
+  font-size: 0.95rem;
+  color: #1f2937;
+  transition: background-color 0.2s;
+}
+
+.expediente-grid p:hover {
+  background-color: #eef2ff;
+}
+
+.expediente-grid strong {
+  color: #4f46e5;
+}
+
+.expediente-subcard {
+  background-color: #ffffff;
+  border-radius: 0.75rem;
+  border-left: 4px solid #4f46e5;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.expediente-subcard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.expediente-subcard p {
+  margin: 0.35rem 0;
+  font-size: 0.95rem;
+  color: #374151;
+}
+
+/* Botón volver */
+.expediente-botones {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+}
+
+.btn-warning {
+  background-color: #facc15;
+  color: #1f2937;
+  font-weight: 600;
+  padding: 0.6rem 1.2rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-warning:hover {
+  background-color: #eab308;
+}
+
+/* =============================
+   📱 RESPONSIVO
+   ============================= */
+@media (max-width: 768px) {
+  .expediente-seccion {
+    padding: 1.25rem;
+  }
+
+  .expediente-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .visualizar-expediente .foto-expediente {
+    width: 140px;
+    height: 140px;
+  }
+
+  .registro-acciones {
+    justify-content: center;
+  }
 /* ====== SIDEBAR ====== */
 .sidebar {
   position: fixed;

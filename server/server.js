@@ -44,14 +44,6 @@ app.use("/auth", authRoutes);
 app.use("/mascotas-perdidas", mascotasPerdidasRoutes);
 app.use("/avistamientos", avistamientosRoutes);
 
-// ==============================
-// 🩺 USAR RUTAS DEL EXPEDIENTE CLÍNICO
-// ==============================
-app.use("/historial", historialVidaRoutes);
-app.use("/salud", saludRoutes);
-app.use("/vacunas", vacunasRoutes);
-app.use("/desparasitaciones", desparasitacionesRoutes);
-app.use("/comportamiento", comportamientoRoutes);
 
 // ==============================
 // 🌐 RUTA DE PRUEBA / STATUS
@@ -69,13 +61,7 @@ app.get("/", (req, res) => {
         "/auth",
         "/mascotas-perdidas",
         "/avistamientos",
-      ],
-      expediente_clinico: [
-        "/historial",
-        "/salud",
-        "/vacunas",
-        "/desparasitaciones",
-        "/comportamiento",
+
       ],
     },
   });
