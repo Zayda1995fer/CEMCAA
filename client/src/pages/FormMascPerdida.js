@@ -3,31 +3,32 @@ import React, { useState } from "react";
 import { Form, Button, Row, Col, Card, Image } from "react-bootstrap";
 import Axios from "axios";
 import Swal from "sweetalert2";
-import { useNavigate } from "react-router-dom";
 import "../App.css";
 
 function FormMascPerdida() {
-  const navigate = useNavigate();
-
-  const [nombreMascota, setNombreMascota] = useState("");
+  const [nombre_mascota, setNombreMascota] = useState("");
   const [especie, setEspecie] = useState("Perro");
   const [raza, setRaza] = useState("");
   const [color, setColor] = useState("");
   const [sexo, setSexo] = useState("Desconocido");
   const [descripcion, setDescripcion] = useState("");
-  const [ultimaUbicacion, setUltimaUbicacion] = useState("");
-  const [fechaPerdida, setFechaPerdida] = useState("");
-  const [estado, setEstado] = useState("pendiente"); // controlado por front
+  const [ultima_ubicacion, setUltimaUbicacion] = useState("");
+  const [fecha_perdida, setFechaPerdida] = useState("");
+  const [estado] = useState("Perdido"); // Estado fijo
   const [imagenFile, setImagenFile] = useState(null);
   const [imagenPreview, setImagenPreview] = useState(null);
 
   const imagenPredeterminada =
-    "https://www.shutterstock.com/es/image-vector/image-coming-soon-no-picture-video-2450891047";
+    "https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg";
 
   // Manejar carga de imagen
   const handleImagenChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        Swal.fire("⚠️ Imagen demasiado grande", "Máximo permitido: 2MB", "warning");
+        return;
+      }
       setImagenFile(file);
       const reader = new FileReader();
       reader.onloadend = () => setImagenPreview(reader.result);
@@ -35,9 +36,9 @@ function FormMascPerdida() {
     }
   };
 
-  // Guardar la publicación
+  // Guardar publicación
   const guardarPublicacion = async () => {
-    if (!nombreMascota || !descripcion || !ultimaUbicacion || !fechaPerdida) {
+    if (!nombre_mascota || !descripcion || !ultima_ubicacion || !fecha_perdida) {
       Swal.fire({
         icon: "warning",
         title: "Campos obligatorios",
@@ -47,15 +48,15 @@ function FormMascPerdida() {
     }
 
     const formData = new FormData();
-    formData.append("nombre_mascota", nombreMascota);
+    formData.append("nombre_mascota", nombre_mascota);
     formData.append("especie", especie);
     formData.append("raza", raza);
     formData.append("color", color);
     formData.append("sexo", sexo);
     formData.append("descripcion", descripcion);
-    formData.append("ultima_ubicacion", ultimaUbicacion);
-    formData.append("fecha_perdida", fechaPerdida);
-    formData.append("estado", estado);
+    formData.append("ultima_ubicacion", ultima_ubicacion);
+    formData.append("fecha_perdida", fecha_perdida);
+    formData.append("estado", estado); // Se envía como "Perdido"
     if (imagenFile) formData.append("imagen", imagenFile);
 
     try {
@@ -64,10 +65,22 @@ function FormMascPerdida() {
       });
 
       Swal.fire("✅ Publicado", "Tu reporte ha sido enviado para revisión.", "success");
-      navigate("/mascotas-perdidas"); // redirige después de guardar
+
+      // Limpiar formulario para un nuevo registro
+      setNombreMascota("");
+      setEspecie("Perro");
+      setRaza("");
+      setColor("");
+      setSexo("Desconocido");
+      setDescripcion("");
+      setUltimaUbicacion("");
+      setFechaPerdida("");
+      setImagenFile(null);
+      setImagenPreview(null);
+
     } catch (err) {
-      console.error(err);
-      Swal.fire("❌ Error", "No se pudo registrar el reporte.", "error");
+      console.error("❌ Error al enviar el reporte:", err);
+      Swal.fire("❌ Error", "No se pudo registrar el reporte. Verifica el servidor.", "error");
     }
   };
 
@@ -107,7 +120,7 @@ function FormMascPerdida() {
                 <Form.Label>Nombre</Form.Label>
                 <Form.Control
                   type="text"
-                  value={nombreMascota}
+                  value={nombre_mascota}
                   onChange={(e) => setNombreMascota(e.target.value)}
                   placeholder="Ej: Rocky"
                 />
@@ -119,6 +132,7 @@ function FormMascPerdida() {
                 <Form.Select value={especie} onChange={(e) => setEspecie(e.target.value)}>
                   <option>Perro</option>
                   <option>Gato</option>
+                  <option>Otro</option>
                 </Form.Select>
               </Form.Group>
             </Col>
@@ -162,10 +176,10 @@ function FormMascPerdida() {
             </Col>
             <Col md={6}>
               <Form.Group>
-                <Form.Label>Fecha en que se perdió</Form.Label>
+                <Form.Label>Fecha de pérdida</Form.Label>
                 <Form.Control
                   type="date"
-                  value={fechaPerdida}
+                  value={fecha_perdida}
                   onChange={(e) => setFechaPerdida(e.target.value)}
                 />
               </Form.Group>
@@ -176,7 +190,7 @@ function FormMascPerdida() {
             <Form.Label>Última ubicación conocida</Form.Label>
             <Form.Control
               type="text"
-              value={ultimaUbicacion}
+              value={ultima_ubicacion}
               onChange={(e) => setUltimaUbicacion(e.target.value)}
               placeholder="Ej: Cerca del parque central"
             />
@@ -193,11 +207,18 @@ function FormMascPerdida() {
             />
           </Form.Group>
 
+          {/* Estado fijo */}
+          <Form.Group className="mt-3">
+            <Form.Label>Estado</Form.Label>
+            <Form.Control type="text" value={estado} readOnly />
+            <small className="text-muted">Este campo no puede modificarse.</small>
+          </Form.Group>
+
           {/* Subida de imagen */}
           <Form.Group className="mt-4">
             <Form.Label>Fotografía</Form.Label>
             <Form.Control type="file" accept="image/*" onChange={handleImagenChange} />
-            <small className="text-muted">Tamaño máximo recomendado: 2 MB</small>
+            <small className="text-muted">Tamaño máximo: 2 MB</small>
           </Form.Group>
 
           {imagenPreview && (
@@ -217,7 +238,7 @@ function FormMascPerdida() {
 
           {/* Botones */}
           <div className="mt-4 d-flex justify-content-between">
-            <Button variant="secondary" onClick={() => navigate("/")}>
+            <Button variant="secondary" onClick={() => window.location.reload()}>
               ← Volver
             </Button>
             <Button variant="primary" onClick={guardarPublicacion}>
