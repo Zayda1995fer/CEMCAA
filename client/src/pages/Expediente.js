@@ -12,7 +12,8 @@ const Expediente = () => {
   // Estados para el formulario de NUEVO expediente
   const [formData, setFormData] = useState({
     historial_vida: {
-      origen: "",cantidad_duenos_previos: 0,
+      origen: "",
+      cantidad_duenos_previos: 0,
       situacion_previa: "",
       ultimo_dueno_nombre_completo: "",
       ultimo_dueno_telefono: "",
@@ -83,7 +84,7 @@ const Expediente = () => {
       enfermedades_temporales: "",
       tratamientos_medicos: "",
       esterilizacion: "",
-      fecha_actualizacion: new Date().toISOString().split('T')[0]
+      fecha_actualizacion: new Date().toISOString().split("T")[0],
     },
     nueva_vacuna: {
       fecha_vacuna: "",
@@ -94,7 +95,7 @@ const Expediente = () => {
       proxima_dosis: "",
       veterinario: "",
       observaciones: "",
-      fecha_registro: new Date().toISOString().split('T')[0]
+      fecha_registro: new Date().toISOString().split("T")[0],
     },
     nueva_desparasitacion: {
       fecha_desparasitacion: "",
@@ -104,10 +105,10 @@ const Expediente = () => {
       proxima_aplicacion: "",
       veterinario: "",
       observaciones: "",
-      fecha_registro: new Date().toISOString().split('T')[0]
+      fecha_registro: new Date().toISOString().split("T")[0],
     },
     nueva_revision: {
-      fecha: new Date().toISOString().split('T')[0],
+      fecha: new Date().toISOString().split("T")[0],
       tipo: "",
       motivo: "",
       diagnostico: "",
@@ -117,8 +118,8 @@ const Expediente = () => {
       observaciones: "",
       veterinario: "",
       fecha_proxima_revision: "",
-      fecha_registro: new Date().toISOString().split('T')[0]
-    }
+      fecha_registro: new Date().toISOString().split("T")[0],
+    },
   });
 
   useEffect(() => {
@@ -158,13 +159,13 @@ const Expediente = () => {
 
   const editarExpedienteDesdeLista = async (id) => {
     try {
-      const response = await axios.get(`http://localhost:3001/expediente/${id}`);
+      const response = await axios.get(
+        `http://localhost:3001/expediente/${id}`
+      );
       const expedienteCompleto = response.data;
-      
       setExpedienteAEditar(expedienteCompleto);
       precargarFormularioEdicion(expedienteCompleto);
       setModo("editarDesdeLista");
-      
     } catch (error) {
       console.error("Error cargando expediente para editar:", error);
       alert("Error al cargar el expediente para editar: " + error.message);
@@ -173,43 +174,35 @@ const Expediente = () => {
 
   const precargarFormularioEdicion = (expediente) => {
     if (!expediente) return;
-
     setAnimalSeleccionado(expediente.animal?.Id?.toString() || "");
-
     if (expediente.historial_vida) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         historial_vida: {
           ...prev.historial_vida,
-          ...expediente.historial_vida
-        }
+          ...expediente.historial_vida,
+        },
       }));
     }
-
     if (expediente.salud) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        salud: {
-          ...prev.salud,
-          ...expediente.salud
-        }
+        salud: { ...prev.salud, ...expediente.salud },
       }));
     }
-
     if (expediente.comportamiento) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         comportamiento: {
           ...prev.comportamiento,
-          ...expediente.comportamiento
-        }
+          ...expediente.comportamiento,
+        },
       }));
     }
-
     if (expediente.vacunas && expediente.vacunas.length > 0) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        vacunas: expediente.vacunas.map(vacuna => ({
+        vacunas: expediente.vacunas.map((vacuna) => ({
           fecha_vacuna: vacuna.fecha_vacuna || "",
           tipo_vacuna: vacuna.tipo_vacuna || "",
           producto: vacuna.producto || "",
@@ -218,15 +211,18 @@ const Expediente = () => {
           proxima_dosis: vacuna.proxima_dosis || "",
           veterinario: vacuna.veterinario || "",
           observaciones: vacuna.observaciones || "",
-          fecha_registro: vacuna.fecha_registro || new Date().toISOString().split("T")[0]
-        }))
+          fecha_registro:
+            vacuna.fecha_registro || new Date().toISOString().split("T")[0],
+        })),
       }));
     }
-
-    if (expediente.desparasitaciones && expediente.desparasitaciones.length > 0) {
-      setFormData(prev => ({
+    if (
+      expediente.desparasitaciones &&
+      expediente.desparasitaciones.length > 0
+    ) {
+      setFormData((prev) => ({
         ...prev,
-        desparasitaciones: expediente.desparasitaciones.map(desp => ({
+        desparasitaciones: expediente.desparasitaciones.map((desp) => ({
           fecha_desparasitacion: desp.fecha_desparasitacion || "",
           tipo: desp.tipo || "",
           producto: desp.producto || "",
@@ -234,19 +230,17 @@ const Expediente = () => {
           proxima_aplicacion: desp.proxima_aplicacion || "",
           veterinario: desp.veterinario || "",
           observaciones: desp.observaciones || "",
-          fecha_registro: desp.fecha_registro || new Date().toISOString().split("T")[0]
-        }))
+          fecha_registro:
+            desp.fecha_registro || new Date().toISOString().split("T")[0],
+        })),
       }));
     }
-
     if (expediente.revisiones && expediente.revisiones.length > 0) {
-      const ultimaRevision = expediente.revisiones[expediente.revisiones.length - 1];
-      setFormData(prev => ({
+      const ultimaRevision =
+        expediente.revisiones[expediente.revisiones.length - 1];
+      setFormData((prev) => ({
         ...prev,
-        expediente_clinico: {
-          ...prev.expediente_clinico,
-          ...ultimaRevision
-        }
+        expediente_clinico: { ...prev.expediente_clinico, ...ultimaRevision },
       }));
     }
   };
@@ -262,6 +256,7 @@ const Expediente = () => {
         ultimo_dueno_telefono: "",
         fecha_registro: new Date().toISOString().split("T")[0],
       },
+
       salud: {
         estado_actual_salud: "",
         enfermedades_temporales: "",
@@ -271,6 +266,7 @@ const Expediente = () => {
         cirugias_anteriores: "",
         fecha_actualizacion: new Date().toISOString().split("T")[0],
       },
+
       vacunas: [
         {
           fecha_vacuna: "",
@@ -394,18 +390,18 @@ const Expediente = () => {
   };
 
   const handleInputChangeActualizar = (seccion, campo, valor) => {
-    setFormDataActualizar(prev => ({
+    setFormDataActualizar((prev) => ({
       ...prev,
       [seccion]: {
         ...prev[seccion],
-        [campo]: valor
-      }
+        [campo]: valor,
+      },
     }));
   };
 
   const handleActualizarExpediente = async (e) => {
     e.preventDefault();
-    
+
     if (!expedienteSeleccionado) {
       alert("No hay expediente seleccionado");
       return;
@@ -417,26 +413,26 @@ const Expediente = () => {
         salud: formDataActualizar.salud,
         nueva_vacuna: formDataActualizar.nueva_vacuna,
         nueva_desparasitacion: formDataActualizar.nueva_desparasitacion,
-        nueva_revision: formDataActualizar.nueva_revision
+        nueva_revision: formDataActualizar.nueva_revision,
       };
 
       const response = await axios.put(
         `http://localhost:3001/expediente/${expedienteSeleccionado.animal.Id}`,
         datosActualizacion
       );
-      
+
       if (response.status === 200) {
         alert("✅ Expediente actualizado exitosamente");
         verExpediente(expedienteSeleccionado.animal.Id);
         setModo("detalle");
-        
+
         setFormDataActualizar({
           salud: {
             estado_actual_salud: "",
             enfermedades_temporales: "",
             tratamientos_medicos: "",
             esterilizacion: "",
-            fecha_actualizacion: new Date().toISOString().split('T')[0]
+            fecha_actualizacion: new Date().toISOString().split("T")[0],
           },
           nueva_vacuna: {
             fecha_vacuna: "",
@@ -447,7 +443,7 @@ const Expediente = () => {
             proxima_dosis: "",
             veterinario: "",
             observaciones: "",
-            fecha_registro: new Date().toISOString().split('T')[0]
+            fecha_registro: new Date().toISOString().split("T")[0],
           },
           nueva_desparasitacion: {
             fecha_desparasitacion: "",
@@ -457,10 +453,10 @@ const Expediente = () => {
             proxima_aplicacion: "",
             veterinario: "",
             observaciones: "",
-            fecha_registro: new Date().toISOString().split('T')[0]
+            fecha_registro: new Date().toISOString().split("T")[0],
           },
           nueva_revision: {
-            fecha: new Date().toISOString().split('T')[0],
+            fecha: new Date().toISOString().split("T")[0],
             tipo: "",
             motivo: "",
             diagnostico: "",
@@ -470,13 +466,16 @@ const Expediente = () => {
             observaciones: "",
             veterinario: "",
             fecha_proxima_revision: "",
-            fecha_registro: new Date().toISOString().split('T')[0]
-          }
+            fecha_registro: new Date().toISOString().split("T")[0],
+          },
         });
       }
     } catch (error) {
       console.error("Error al actualizar expediente:", error);
-      alert("Error al actualizar el expediente: " + (error.response?.data?.error || error.message));
+      alert(
+        "Error al actualizar el expediente: " +
+          (error.response?.data?.error || error.message)
+      );
     }
   };
 
@@ -534,40 +533,46 @@ const Expediente = () => {
 
   const encontrarHistorial = (expediente) => {
     const posiblesCampos = [
-      'historial_vida',
-      'historialVida', 
-      'historial',
-      'datos_historial',
-      'historialDeVida',
-      'vida_historial',
-      'life_history'
+      "historial_vida",
+      "historialVida",
+      "historial",
+      "datos_historial",
+      "historialDeVida",
+      "vida_historial",
+      "life_history",
     ];
-    
+
     for (let campo of posiblesCampos) {
       if (expediente[campo]) {
         return expediente[campo];
       }
     }
-    
+
     const buscarEnObjeto = (obj, profundidad = 0) => {
       if (profundidad > 3) return null;
-      
+
       for (let key in obj) {
-        if (typeof obj[key] === 'object' && obj[key] !== null) {
-          const posiblesKeysHistorial = ['origen', 'cantidad_duenos_previos', 'situacion_previa'];
-          const tieneCamposHistorial = posiblesKeysHistorial.some(k => k in obj[key]);
-          
+        if (typeof obj[key] === "object" && obj[key] !== null) {
+          const posiblesKeysHistorial = [
+            "origen",
+            "cantidad_duenos_previos",
+            "situacion_previa",
+          ];
+          const tieneCamposHistorial = posiblesKeysHistorial.some(
+            (k) => k in obj[key]
+          );
+
           if (tieneCamposHistorial) {
             return obj[key];
           }
-          
+
           const resultado = buscarEnObjeto(obj[key], profundidad + 1);
           if (resultado) return resultado;
         }
       }
       return null;
     };
-    
+
     return buscarEnObjeto(expediente);
   };
 
@@ -656,10 +661,10 @@ const Expediente = () => {
           <div className="header-with-button">
             <h2>Expediente de {expedienteSeleccionado.animal.nombre}</h2>
             <div>
-              <button 
+              <button
                 className="btn-agregar-info"
                 onClick={() => setModo("editar")}
-                style={{marginRight: '10px'}}
+                style={{ marginRight: "10px" }}
               >
                 ✏️ Agregar información
               </button>
@@ -696,31 +701,45 @@ const Expediente = () => {
 
             <section className="detail-section">
               <h3>📖 Historial de Vida</h3>
-              
+
               {(() => {
                 const historial = encontrarHistorial(expedienteSeleccionado);
-                
+
                 return historial ? (
                   <div className="detail-grid">
                     <div>
                       <strong>Origen:</strong>{" "}
-                      {historial.origen || historial.Origen || "No especificado"}
+                      {historial.origen ||
+                        historial.Origen ||
+                        "No especificado"}
                     </div>
                     <div>
                       <strong>Dueños Previos:</strong>{" "}
-                      {historial.cantidad_duenos_previos ?? historial.cantidadDuenosPrevios ?? historial.duenos_previos ?? "0"}
+                      {historial.cantidad_duenos_previos ??
+                        historial.cantidadDuenosPrevios ??
+                        historial.duenos_previos ??
+                        "0"}
                     </div>
                     <div>
                       <strong>Situación Previa:</strong>{" "}
-                      {historial.situacion_previa || historial.situacionPrevia || historial.situacion || "No especificada"}
+                      {historial.situacion_previa ||
+                        historial.situacionPrevia ||
+                        historial.situacion ||
+                        "No especificada"}
                     </div>
                     <div>
                       <strong>Último Dueño:</strong>{" "}
-                      {historial.ultimo_dueno_nombre_completo || historial.ultimoDuenoNombreCompleto || historial.ultimo_dueno || "No especificado"}
+                      {historial.ultimo_dueno_nombre_completo ||
+                        historial.ultimoDuenoNombreCompleto ||
+                        historial.ultimo_dueno ||
+                        "No especificado"}
                     </div>
                     <div>
                       <strong>Teléfono:</strong>{" "}
-                      {historial.ultimo_dueno_telefono || historial.ultimoDuenoTelefono || historial.telefono_dueno || "No especificado"}
+                      {historial.ultimo_dueno_telefono ||
+                        historial.ultimoDuenoTelefono ||
+                        historial.telefono_dueno ||
+                        "No especificado"}
                     </div>
                   </div>
                 ) : (
@@ -933,25 +952,38 @@ const Expediente = () => {
       {modo === "editar" && expedienteSeleccionado && (
         <>
           <div className="header-with-button">
-            <h2>✏️ Actualizar Expediente de {expedienteSeleccionado.animal.nombre}</h2>
-            <button onClick={() => setModo("detalle")}>⬅️ Volver al expediente</button>
+            <h2>
+              ✏️ Actualizar Expediente de {expedienteSeleccionado.animal.nombre}
+            </h2>
+            <button onClick={() => setModo("detalle")}>
+              ⬅️ Volver al expediente
+            </button>
           </div>
 
           <div className="editar-form">
             <div className="alert-info">
-              <strong>💡 Información:</strong> Estás actualizando el expediente existente. 
-              Los nuevos datos se agregarán a la información actual.
+              <strong>💡 Información:</strong> Estás actualizando el expediente
+              existente. Los nuevos datos se agregarán a la información actual.
             </div>
 
-            <form onSubmit={handleActualizarExpediente} className="expediente-form">
+            <form
+              onSubmit={handleActualizarExpediente}
+              className="expediente-form"
+            >
               <div className="form-section">
                 <h3>🏥 Actualizar Salud</h3>
                 <div className="form-row">
                   <div className="form-group">
                     <label>Estado de Salud Actual:</label>
-                    <select 
+                    <select
                       value={formDataActualizar.salud.estado_actual_salud}
-                      onChange={(e) => handleInputChangeActualizar('salud', 'estado_actual_salud', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChangeActualizar(
+                          "salud",
+                          "estado_actual_salud",
+                          e.target.value
+                        )
+                      }
                     >
                       <option value="">Seleccionar...</option>
                       <option value="Excelente">Excelente</option>
@@ -962,9 +994,15 @@ const Expediente = () => {
                   </div>
                   <div className="form-group">
                     <label>Esterilización:</label>
-                    <select 
+                    <select
                       value={formDataActualizar.salud.esterilizacion}
-                      onChange={(e) => handleInputChangeActualizar('salud', 'esterilizacion', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChangeActualizar(
+                          "salud",
+                          "esterilizacion",
+                          e.target.value
+                        )
+                      }
                     >
                       <option value="">Seleccionar...</option>
                       <option value="Si">Sí</option>
@@ -974,18 +1012,30 @@ const Expediente = () => {
                 </div>
                 <div className="form-group">
                   <label>Enfermedades/Problemas Actuales:</label>
-                  <textarea 
+                  <textarea
                     value={formDataActualizar.salud.enfermedades_temporales}
-                    onChange={(e) => handleInputChangeActualizar('salud', 'enfermedades_temporales', e.target.value)}
+                    onChange={(e) =>
+                      handleInputChangeActualizar(
+                        "salud",
+                        "enfermedades_temporales",
+                        e.target.value
+                      )
+                    }
                     rows="2"
                     placeholder="Describa cualquier enfermedad o problema de salud actual"
                   />
                 </div>
                 <div className="form-group">
                   <label>Tratamientos en Curso:</label>
-                  <textarea 
+                  <textarea
                     value={formDataActualizar.salud.tratamientos_medicos}
-                    onChange={(e) => handleInputChangeActualizar('salud', 'tratamientos_medicos', e.target.value)}
+                    onChange={(e) =>
+                      handleInputChangeActualizar(
+                        "salud",
+                        "tratamientos_medicos",
+                        e.target.value
+                      )
+                    }
                     rows="2"
                     placeholder="Tratamientos médicos actuales"
                   />
@@ -997,18 +1047,30 @@ const Expediente = () => {
                 <div className="form-row">
                   <div className="form-group">
                     <label>Fecha Vacuna:</label>
-                    <input 
-                      type="date" 
+                    <input
+                      type="date"
                       value={formDataActualizar.nueva_vacuna.fecha_vacuna}
-                      onChange={(e) => handleInputChangeActualizar('nueva_vacuna', 'fecha_vacuna', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChangeActualizar(
+                          "nueva_vacuna",
+                          "fecha_vacuna",
+                          e.target.value
+                        )
+                      }
                     />
                   </div>
                   <div className="form-group">
                     <label>Tipo Vacuna:</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       value={formDataActualizar.nueva_vacuna.tipo_vacuna}
-                      onChange={(e) => handleInputChangeActualizar('nueva_vacuna', 'tipo_vacuna', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChangeActualizar(
+                          "nueva_vacuna",
+                          "tipo_vacuna",
+                          e.target.value
+                        )
+                      }
                       placeholder="Ej: Rabia, Moquillo, etc."
                     />
                   </div>
@@ -1016,28 +1078,46 @@ const Expediente = () => {
                 <div className="form-row">
                   <div className="form-group">
                     <label>Producto:</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       value={formDataActualizar.nueva_vacuna.producto}
-                      onChange={(e) => handleInputChangeActualizar('nueva_vacuna', 'producto', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChangeActualizar(
+                          "nueva_vacuna",
+                          "producto",
+                          e.target.value
+                        )
+                      }
                       placeholder="Nombre del producto"
                     />
                   </div>
                   <div className="form-group">
                     <label>Próxima Dosis:</label>
-                    <input 
-                      type="date" 
+                    <input
+                      type="date"
                       value={formDataActualizar.nueva_vacuna.proxima_dosis}
-                      onChange={(e) => handleInputChangeActualizar('nueva_vacuna', 'proxima_dosis', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChangeActualizar(
+                          "nueva_vacuna",
+                          "proxima_dosis",
+                          e.target.value
+                        )
+                      }
                     />
                   </div>
                 </div>
                 <div className="form-group">
                   <label>Veterinario:</label>
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     value={formDataActualizar.nueva_vacuna.veterinario}
-                    onChange={(e) => handleInputChangeActualizar('nueva_vacuna', 'veterinario', e.target.value)}
+                    onChange={(e) =>
+                      handleInputChangeActualizar(
+                        "nueva_vacuna",
+                        "veterinario",
+                        e.target.value
+                      )
+                    }
                     placeholder="Nombre del veterinario"
                   />
                 </div>
@@ -1048,17 +1128,32 @@ const Expediente = () => {
                 <div className="form-row">
                   <div className="form-group">
                     <label>Fecha Desparasitación:</label>
-                    <input 
-                      type="date" 
-                      value={formDataActualizar.nueva_desparasitacion.fecha_desparasitacion}
-                      onChange={(e) => handleInputChangeActualizar('nueva_desparasitacion', 'fecha_desparasitacion', e.target.value)}
+                    <input
+                      type="date"
+                      value={
+                        formDataActualizar.nueva_desparasitacion
+                          .fecha_desparasitacion
+                      }
+                      onChange={(e) =>
+                        handleInputChangeActualizar(
+                          "nueva_desparasitacion",
+                          "fecha_desparasitacion",
+                          e.target.value
+                        )
+                      }
                     />
                   </div>
                   <div className="form-group">
                     <label>Tipo:</label>
-                    <select 
+                    <select
                       value={formDataActualizar.nueva_desparasitacion.tipo}
-                      onChange={(e) => handleInputChangeActualizar('nueva_desparasitacion', 'tipo', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChangeActualizar(
+                          "nueva_desparasitacion",
+                          "tipo",
+                          e.target.value
+                        )
+                      }
                     >
                       <option value="">Seleccionar...</option>
                       <option value="Interna">Interna</option>
@@ -1070,19 +1165,34 @@ const Expediente = () => {
                 <div className="form-row">
                   <div className="form-group">
                     <label>Producto:</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       value={formDataActualizar.nueva_desparasitacion.producto}
-                      onChange={(e) => handleInputChangeActualizar('nueva_desparasitacion', 'producto', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChangeActualizar(
+                          "nueva_desparasitacion",
+                          "producto",
+                          e.target.value
+                        )
+                      }
                       placeholder="Nombre del producto"
                     />
                   </div>
                   <div className="form-group">
                     <label>Próxima Aplicación:</label>
-                    <input 
-                      type="date" 
-                      value={formDataActualizar.nueva_desparasitacion.proxima_aplicacion}
-                      onChange={(e) => handleInputChangeActualizar('nueva_desparasitacion', 'proxima_aplicacion', e.target.value)}
+                    <input
+                      type="date"
+                      value={
+                        formDataActualizar.nueva_desparasitacion
+                          .proxima_aplicacion
+                      }
+                      onChange={(e) =>
+                        handleInputChangeActualizar(
+                          "nueva_desparasitacion",
+                          "proxima_aplicacion",
+                          e.target.value
+                        )
+                      }
                     />
                   </div>
                 </div>
@@ -1093,17 +1203,29 @@ const Expediente = () => {
                 <div className="form-row">
                   <div className="form-group">
                     <label>Fecha Revisión:</label>
-                    <input 
-                      type="date" 
+                    <input
+                      type="date"
                       value={formDataActualizar.nueva_revision.fecha}
-                      onChange={(e) => handleInputChangeActualizar('nueva_revision', 'fecha', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChangeActualizar(
+                          "nueva_revision",
+                          "fecha",
+                          e.target.value
+                        )
+                      }
                     />
                   </div>
                   <div className="form-group">
                     <label>Tipo:</label>
-                    <select 
+                    <select
                       value={formDataActualizar.nueva_revision.tipo}
-                      onChange={(e) => handleInputChangeActualizar('nueva_revision', 'tipo', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChangeActualizar(
+                          "nueva_revision",
+                          "tipo",
+                          e.target.value
+                        )
+                      }
                     >
                       <option value="">Seleccionar...</option>
                       <option value="Consulta">Consulta</option>
@@ -1117,9 +1239,15 @@ const Expediente = () => {
                 </div>
                 <div className="form-group">
                   <label>Motivo:</label>
-                  <textarea 
+                  <textarea
                     value={formDataActualizar.nueva_revision.motivo}
-                    onChange={(e) => handleInputChangeActualizar('nueva_revision', 'motivo', e.target.value)}
+                    onChange={(e) =>
+                      handleInputChangeActualizar(
+                        "nueva_revision",
+                        "motivo",
+                        e.target.value
+                      )
+                    }
                     rows="2"
                     placeholder="Motivo de la consulta o revisión"
                   />
@@ -1127,28 +1255,46 @@ const Expediente = () => {
                 <div className="form-row">
                   <div className="form-group">
                     <label>Peso (kg):</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       value={formDataActualizar.nueva_revision.peso}
-                      onChange={(e) => handleInputChangeActualizar('nueva_revision', 'peso', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChangeActualizar(
+                          "nueva_revision",
+                          "peso",
+                          e.target.value
+                        )
+                      }
                       placeholder="Ej: 5.2 kg"
                     />
                   </div>
                   <div className="form-group">
                     <label>Temperatura (°C):</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       value={formDataActualizar.nueva_revision.temperatura}
-                      onChange={(e) => handleInputChangeActualizar('nueva_revision', 'temperatura', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChangeActualizar(
+                          "nueva_revision",
+                          "temperatura",
+                          e.target.value
+                        )
+                      }
                       placeholder="Ej: 38.5°C"
                     />
                   </div>
                 </div>
                 <div className="form-group">
                   <label>Diagnóstico/Observaciones:</label>
-                  <textarea 
+                  <textarea
                     value={formDataActualizar.nueva_revision.diagnostico}
-                    onChange={(e) => handleInputChangeActualizar('nueva_revision', 'diagnostico', e.target.value)}
+                    onChange={(e) =>
+                      handleInputChangeActualizar(
+                        "nueva_revision",
+                        "diagnostico",
+                        e.target.value
+                      )
+                    }
                     rows="3"
                     placeholder="Diagnóstico y observaciones del veterinario"
                   />
@@ -1159,8 +1305,8 @@ const Expediente = () => {
                 <button type="submit" className="btn-guardar">
                   💾 Guardar Actualizaciones
                 </button>
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   className="btn-cancelar"
                   onClick={() => setModo("detalle")}
                 >
@@ -1175,21 +1321,30 @@ const Expediente = () => {
       {modo === "editarDesdeLista" && expedienteAEditar && (
         <>
           <div className="header-with-button">
-            <h2>✏️ Editando Expediente de {expedienteAEditar.animal?.nombre}</h2>
-            <button className="btn-cancelar" onClick={() => {
-              setModo("lista");
-              setExpedienteAEditar(null);
-              resetearFormulario();
-            }}>
+            <h2>
+              ✏️ Editando Expediente de {expedienteAEditar.animal?.nombre}
+            </h2>
+            <button
+              className="btn-cancelar"
+              onClick={() => {
+                setModo("lista");
+                setExpedienteAEditar(null);
+                resetearFormulario();
+              }}
+            >
               ↩️ Volver al listado
             </button>
           </div>
 
           <div className="alert-info">
-            <strong>💡 Estás editando el expediente existente:</strong> 
-            {expedienteAEditar.animal?.nombre} - {expedienteAEditar.animal?.especie} - {expedienteAEditar.animal?.raza}
+            <strong>💡 Estás editando el expediente existente:</strong>
+            {expedienteAEditar.animal?.nombre} -{" "}
+            {expedienteAEditar.animal?.especie} -{" "}
+            {expedienteAEditar.animal?.raza}
             <br />
-            <small>Puedes modificar cualquier campo y guardar los cambios.</small>
+            <small>
+              Puedes modificar cualquier campo y guardar los cambios.
+            </small>
           </div>
 
           <form onSubmit={handleSubmit} className="expediente-form">
@@ -1203,7 +1358,7 @@ const Expediente = () => {
                   disabled
                   className="input-disabled"
                 />
-                <small style={{color: '#666', fontStyle: 'italic'}}>
+                <small style={{ color: "#666", fontStyle: "italic" }}>
                   No puedes cambiar el animal asociado al expediente
                 </small>
               </div>
@@ -2015,9 +2170,7 @@ const Expediente = () => {
                   onChange={(e) => setAnimalSeleccionado(e.target.value)}
                   required
                 >
-                  <option value="">
-                    Selecciona un animal
-                  </option>
+                  <option value="">Selecciona un animal</option>
                   {animales.map((animal) => (
                     <option key={animal.Id} value={animal.Id}>
                       {animal.nombre} - {animal.especie} - {animal.raza}
