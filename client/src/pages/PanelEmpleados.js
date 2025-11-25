@@ -1,49 +1,52 @@
+// src/pages/PanelEmpleados.js
 import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Card, Button, Spinner } from "react-bootstrap";
+import { Container, Row, Col, Card, Button, Spinner, Badge } from "react-bootstrap";
 import Axios from "axios";
 import Swal from "sweetalert2";
 import "../App.css";
 
 function PanelEmpleados() {
-  const [vistaActiva, setVistaActiva] = useState("solicitudes"); // 👈 controla pestaña activa
+  const [vistaActiva, setVistaActiva] = useState("solicitudes");
   const [mascotasPerdidas, setMascotasPerdidas] = useState([]);
   const [avistamientos, setAvistamientos] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const imagenPredeterminada =
-    "https://www.shutterstock.com/es/image-vector/image-coming-soon-no-picture-video-2450891047";
+    "https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg";
 
   useEffect(() => {
-    cargarSolicitudes();
-    cargarAvisos();
+    cargarMascotasPerdidas();
+    cargarAvistamientos();
   }, []);
 
-  // 🐾 Cargar mascotas perdidas (solicitudes)
-  const cargarSolicitudes = async () => {
+  const cargarMascotasPerdidas = async () => {
     setLoading(true);
     try {
       const res = await Axios.get("http://localhost:3001/mascotas-perdidas");
       setMascotasPerdidas(res.data);
     } catch (err) {
       console.error("Error al obtener mascotas perdidas:", err);
-      Swal.fire("Error", "No se pudieron cargar las solicitudes.", "error");
+      Swal.fire("❌ Error", "No se pudieron cargar las solicitudes.", "error");
     } finally {
       setLoading(false);
     }
   };
 
-  // 📢 Cargar todos los avisos registrados
-  const cargarAvisos = async () => {
+  const cargarAvistamientos = async () => {
     try {
-      const res = await Axios.get("http://localhost:3001/avistamientos"); // 👈 ruta general
+      const res = await Axios.get("http://localhost:3001/avistamientos");
       setAvistamientos(res.data);
     } catch (err) {
-      console.error("Error al obtener avisos:", err);
+      console.error("Error al obtener avistamientos:", err);
     }
   };
 
-  // 🔄 Cambiar estado de una mascota
-  const cambiarEstado = async (id, nuevoEstado) => {
+  const cambiarEstado = async (idMascotaPerdida, nuevoEstado) => {
+    if (!idMascotaPerdida) {
+      Swal.fire("Error", "ID de mascota no definido.", "error");
+      return;
+    }
+
     Swal.fire({
       title: `¿Confirmas cambiar el estado a "${nuevoEstado}"?`,
       icon: "question",
@@ -56,31 +59,38 @@ function PanelEmpleados() {
       if (result.isConfirmed) {
         try {
           await Axios.put(
-            `http://localhost:3001/mascotas-perdidas/${id}/estado`,
+            `http://localhost:3001/mascotas-perdidas/${idMascotaPerdida}/estado`,
             { estado: nuevoEstado }
           );
           Swal.fire("✅ Estado actualizado", "", "success");
-          cargarSolicitudes();
+          cargarMascotasPerdidas();
         } catch (err) {
-          console.error(err);
+          console.error("Error al actualizar estado:", err);
           Swal.fire("Error", "No se pudo actualizar el estado.", "error");
         }
       }
     });
   };
 
+  // Función para color del badge según estado
+  const colorEstado = (estado) => {
+    switch (estado) {
+      case "Perdido":
+        return "danger"; // rojo
+      case "Encontrado":
+        return "success"; // verde
+      default:
+        return "secondary"; // gris
+    }
+  };
+
   return (
     <Container className="my-5">
-      <h2
-        className="text-center mb-4"
-        style={{ color: "#4f46e5", fontWeight: "700" }}
-      >
+      <h2 className="text-center mb-4" style={{ color: "#4f46e5", fontWeight: "700" }}>
         🐾 Panel de Empleados
       </h2>
 
-      {/* ======================
-          PESTAÑAS DE CONTROL
-      ====================== */}
+      {/* Pestañas */}
       <div className="d-flex justify-content-center mb-4 gap-3">
         <Button
           variant={vistaActiva === "solicitudes" ? "primary" : "outline-primary"}
@@ -89,7 +99,6 @@ function PanelEmpleados() {
         >
           📋 Solicitudes
         </Button>
-
         <Button
           variant={vistaActiva === "avisos" ? "warning" : "outline-warning"}
           onClick={() => setVistaActiva("avisos")}
@@ -106,9 +115,6 @@ function PanelEmpleados() {
         </div>
       ) : (
         <>
-          {/* =========================
-              SECCIÓN: SOLICITUDES
-          ========================= */}
           {vistaActiva === "solicitudes" && (
             <>
               <h4 className="mb-4" style={{ color: "#374151" }}>
@@ -139,45 +145,23 @@ function PanelEmpleados() {
                         <Card.Body className="d-flex flex-column">
                           <h5>{m.nombre_mascota}</h5>
                           <ul className="mb-3">
+                            <li><strong>Especie:</strong> {m.especie}</li>
+                            <li><strong>Raza:</strong> {m.raza || "N/A"}</li>
+                            <li><strong>Color:</strong> {m.color || "N/A"}</li>
+                            <li><strong>Sexo:</strong> {m.sexo}</li>
+                            <li><strong>Última ubicación:</strong> {m.ultima_ubicacion || "No especificada"}</li>
+                            <li><strong>Fecha pérdida:</strong> {m.fecha_perdida ? new Date(m.fecha_perdida).toLocaleDateString() : "No registrada"}</li>
                             <li>
-                              <strong>Especie:</strong> {m.especie}
-                            </li>
-                            <li>
-                              <strong>Color:</strong> {m.color || "N/A"}
-                            </li>
-                            <li>
-                              <strong>Última ubicación:</strong>{" "}
-                              {m.ultima_ubicacion || "No especificada"}
-                            </li>
-                            <li>
-                              <strong>Fecha pérdida:</strong>{" "}
-                              {m.fecha_perdida
-                                ? new Date(m.fecha_perdida).toLocaleDateString()
-                                : "No registrada"}
+                              <strong>Estado actual:</strong>{" "}
+                              <Badge bg={colorEstado(m.estado)}>{m.estado}</Badge>
                             </li>
                           </ul>
-
                           <div className="d-flex flex-wrap gap-2 mt-auto pt-2 border-top">
-                            <Button
-                              size="sm"
-                              variant="success"
-                              onClick={() => cambiarEstado(m.id, "aprobado")}
-                            >
-                              ✅ Aprobar
+                            <Button size="sm" variant="success" onClick={() => cambiarEstado(m.id, "Encontrado")}>
+                              🐕 Marcar como Encontrado
                             </Button>
-                            <Button
-                              size="sm"
-                              variant="danger"
-                              onClick={() => cambiarEstado(m.id, "rechazado")}
-                            >
-                              ❌ Rechazar
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="primary"
-                              onClick={() => cambiarEstado(m.id, "encontrada")}
-                            >
-                              🐕 Encontrada
+                            <Button size="sm" variant="secondary" onClick={() => cambiarEstado(m.id, "Perdido")}>
+                              🔄 Volver a Perdido
                             </Button>
                           </div>
                         </Card.Body>
@@ -186,20 +170,17 @@ function PanelEmpleados() {
                   ))
                 ) : (
                   <p className="text-center text-muted mt-5">
-                    No hay solicitudes pendientes.
+                    No hay mascotas reportadas actualmente.
                   </p>
                 )}
               </Row>
             </>
           )}
 
-          {/* =========================
-              SECCIÓN: AVISOS
-          ========================= */}
           {vistaActiva === "avisos" && (
             <>
               <h4 className="mb-4" style={{ color: "#b45309" }}>
-                📢 Avisos Registrados
+                📢 Avistamientos Registrados
               </h4>
               <Row className="g-4">
                 {avistamientos.length > 0 ? (
@@ -213,51 +194,22 @@ function PanelEmpleados() {
                         }}
                       >
                         <Card.Body className="d-flex flex-column">
-                          <h5 style={{ color: "#92400e" }}>
-                            🐾 Aviso #{a.id}
-                          </h5>
-                          <p className="mb-1">
-                            <strong>📅 Fecha vista:</strong>{" "}
-                            {new Date(a.fecha_avistamiento).toLocaleDateString()}
-                          </p>
-                          <p className="mb-1">
-                            <strong>👤 Reportó:</strong>{" "}
-                            {a.nombre_contacto || "Anónimo"}
-                          </p>
-                          <p className="mb-1">
-                            <strong>📞 Teléfono:</strong>{" "}
-                            {a.telefono_contacto || "No proporcionado"}
-                          </p>
-                          <p className="mb-1">
-                            <strong>📍 Ubicación:</strong>{" "}
-                            {a.ubicacion_avistamiento}
-                          </p>
-                          <p className="mb-1">
-                            <strong>📝 Descripción:</strong>{" "}
-                            {a.descripcion || "Sin detalles"}
-                          </p>
-                          <p className="mt-2">
-                            <strong>🏠 ¿Se la llevó?:</strong>{" "}
-                            {a.se_lo_llevo ? "Sí" : "No"}
-                          </p>
-
+                          <h5 style={{ color: "#92400e" }}>👀 Avistamiento #{a.id}</h5>
+                          <p><strong>📅 Fecha vista:</strong>{" "} {a.fecha_avistamiento ? new Date(a.fecha_avistamiento).toLocaleDateString() : "No registrada"}</p>
+                          <p><strong>👤 Reportó:</strong> {a.nombre_contacto || "Anónimo"}</p>
+                          <p><strong>📞 Teléfono:</strong> {a.telefono_contacto || "No proporcionado"}</p>
+                          <p><strong>📍 Ubicación:</strong> {a.ubicacion_avistamiento}</p>
+                          <p><strong>📝 Descripción:</strong> {a.descripcion || "Sin detalles"}</p>
+                          <p><strong>🏠 ¿Se la llevó?:</strong> {a.se_lo_llevo ? "Sí" : "No"}</p>
                           <div className="mt-auto pt-2 border-top">
-                            <Button
-                              size="sm"
-                              variant="outline-secondary"
-                              disabled
-                            >
-                              🐶 ID Mascota: {a.mascota_id}
-                            </Button>
+                            <Button size="sm" variant="outline-secondary" disabled>🐶 ID Mascota: {a.mascota_id}</Button>
                           </div>
                         </Card.Body>
                       </Card>
                     </Col>
                   ))
                 ) : (
-                  <p className="text-center text-muted mt-5">
-                    No hay avisos registrados aún.
-                  </p>
+                  <p className="text-center text-muted mt-5">No hay avistamientos registrados aún.</p>
                 )}
               </Row>
             </>

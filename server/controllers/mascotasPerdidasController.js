@@ -70,7 +70,7 @@ const mascotasPerdidasController = {
         ultima_ubicacion,
         fecha_perdida,
         imagenFinal,
-        estado || "pendiente",
+        estado || "Perdido",
       ],
       (err, result) => {
         if (err) {

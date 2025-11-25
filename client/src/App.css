@@ -980,6 +980,8 @@ main {
   .registro-acciones {
     justify-content: center;
   }
+}
+
 /* ====== SIDEBAR ====== */
 .sidebar {
   position: fixed;
@@ -1142,13 +1144,158 @@ input:focus {
   color: #721c24;
 }
 
+/* Contenedor principal */
+.solicitud-container {
+  font-family: 'Inter', sans-serif;
+}
 
-.solicitud-container { min-height: 100vh; padding: 20px; background-color: #f0f4f8; }
-.solicitud-card { max-width: 800px; margin: auto; background: #fff; padding: 30px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-.solicitud-header { margin-bottom: 20px; }
-.solicitud-title { font-size: 2rem; color: #4f46e5; margin-bottom: 10px; }
-.solicitud-section { margin-bottom: 30px; }
-.solicitud-input, .solicitud-select, .solicitud-textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 10px; }
-.solicitud-checkbox { margin-right: 8px; }
-.solicitud-button { background-color: #4f46e5; color: white; padding: 10px 20px; border-radius: 10px; cursor: pointer; }
-.solicitud-button:hover { background-color: #4338ca; }
+/* Tarjeta central de la solicitud */
+.solicitud-card {
+  background-color: #ffffff;
+  border-radius: 1rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  transition: transform 0.3s ease;
+}
+
+.solicitud-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Títulos */
+.solicitud-card h2 {
+  color: #1f2937; /* gris oscuro */
+}
+
+.solicitud-card h3 {
+  color: #111827;
+}
+
+/* Barras de progreso de secciones */
+.solicitud-card .progress-bar {
+  height: 0.5rem;
+  background-color: #e5e7eb; /* gris claro */
+  border-radius: 9999px;
+  overflow: hidden;
+  margin: 0.5rem 0 1.5rem 0;
+}
+
+.solicitud-card .progress-bar div {
+  height: 100%;
+  background-color: #4f46e5; /* indigo */
+  transition: width 0.3s ease-in-out;
+}
+
+/* Formularios y campos */
+.solicitud-card input,
+.solicitud-card select,
+.solicitud-card textarea {
+  border: 1px solid #d1d5db;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  width: 100%;
+  outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.solicitud-card input:focus,
+.solicitud-card select:focus,
+.solicitud-card textarea:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+}
+
+/* Labels */
+.solicitud-card label {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-weight: 600;
+  color: #374151; /* gris medio */
+}
+
+/* Botones */
+.solicitud-card button {
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.solicitud-card button:hover {
+  cursor: pointer;
+}
+
+.solicitud-card button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Botones de acción específicos */
+.solicitud-card .btn-anterior {
+  background-color: #d1d5db;
+  color: #1f2937;
+}
+
+.solicitud-card .btn-anterior:hover {
+  background-color: #9ca3af;
+}
+
+.solicitud-card .btn-siguiente {
+  background-color: #4f46e5;
+  color: #ffffff;
+}
+
+.solicitud-card .btn-siguiente:hover {
+  background-color: #4338ca;
+}
+
+.solicitud-card .btn-enviar {
+  background-color: #16a34a;
+  color: #ffffff;
+}
+
+.solicitud-card .btn-enviar:hover {
+  background-color: #15803d;
+}
+
+/* Mensajes y selecciones */
+.solicitud-card p {
+  color: #4b5563; /* gris medio */
+  margin-top: 0.5rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .solicitud-card {
+    padding: 1.5rem;
+  }
+
+  .solicitud-card h2 {
+    font-size: 1.75rem;
+  }
+
+  .solicitud-card h3 {
+    font-size: 1.25rem;
+  }
+}
+
+
+.toast-bienvenida {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #4f46e5;
+  color: white;
+  padding: 15px 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  z-index: 9999;
+  font-weight: 600;
+  animation: fadeInOut 4s forwards;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(-20px); }
+  10% { opacity: 1; transform: translateY(0); }
+  90% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-20px); }
+}
+

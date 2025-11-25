@@ -1,0 +1,869 @@
+/* AdoptionRequestsPanel.css */
+
+.container {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.header {
+  background-color: #639ef1;
+  color: white;
+  padding: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.header-title {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.header-subtitle {
+  margin: 0.5rem 0 0 0;
+  opacity: 0.9;
+}
+
+.content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.filtros-container {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.filtros-wrapper {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.input-busqueda {
+  flex: 1;
+  min-width: 250px;
+  padding: 0.75rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.input-busqueda:focus {
+  outline: none;
+  border-color: #808099;
+}
+
+.select-filtro {
+  padding: 0.75rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: white;
+  cursor: pointer;
+}
+
+.select-filtro:focus {
+  outline: none;
+  border-color: #6390f1;
+}
+
+.tabla-container {
+  background-color: rgb(198, 198, 198);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabla-header-row {
+  background-color: #f3f4f6;
+}
+
+.tabla-header {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.tabla-row {
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.tabla-row:hover {
+  background-color: #f9fafb;
+}
+
+.tabla-cell {
+  padding: 1rem;
+  text-align: left;
+  color: #4b5563;
+}
+
+.badge {
+  padding: 0.375rem 0.75rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  display: inline-block;
+}
+
+.puntaje-alto {
+  background-color: #d1fae5;
+  color: #065f46;
+  border-radius: 9999px;
+  padding: 0.25rem 0.75rem;
+  font-weight: bold;
+}
+
+.puntaje-medio {
+  background-color: #fef3c7;
+  color: #92400e;
+  border-radius: 9999px;
+  padding: 0.25rem 0.75rem;
+  font-weight: bold;
+}
+
+.puntaje-bajo {
+  background-color: #f0f4f7;
+  color: #991b1b;
+  border-radius: 9999px;
+  padding: 0.25rem 0.75rem;
+  font-weight: bold;
+}
+
+.estado-aprobada {
+  background-color: #f1f4f4;
+  color: #065f46;
+}
+
+.estado-pendiente {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.estado-rechazada {
+  background-color: #f8fafa;
+  color: #991b1b;
+}
+
+.acciones-container {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.btn {
+  padding: 0.5rem 0.875rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.875rem;
+  transition: opacity 0.2s;
+}
+
+.btn:hover {
+  opacity: 0.85;
+}
+
+.btn-ver {
+  background-color: #8ca7c4;
+  color: white;
+}
+
+.btn-aprobar {
+  background-color: #10b981;
+  color: rgb(255, 255, 255);
+}
+
+.btn-rechazar {
+  background-color: #ef4444;
+  color: rgb(255, 255, 255);
+}
+
+.empty-state {
+  padding: 3rem;
+  text-align: center;
+  color: #6b7280;
+}
+
+.empty-text {
+  font-size: 1.125rem;
+  font-weight: 500;
+}
+
+/* solicitud.css */
+
+/* Contenedor principal */
+.solicitud-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #c3d6fc 0%, #e4f5fc 50%, #dbeafe 100%);
+  padding: 2rem 1rem;
+}
+
+/* Card principal */
+.solicitud-card {
+  max-width: 1400px;
+  margin: 0 auto;
+  background-color: rgb(255, 255, 255);
+  border-radius: 1rem;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  padding: 2rem;
+  border-top: 4px solid #6392f1;
+}
+
+/* Títulos */
+.solicitud-card h2 {
+  font-size: 2.25rem;
+  font-weight: bold;
+  background: linear-gradient(to right, #6390f1, #5583f7);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 0.5rem;
+}
+
+.solicitud-card h2 + p {
+  color: #6b7280;
+  margin-top: 0.25rem;
+}
+
+/* Botones */
+.solicitud-card button {
+  font-weight: 500;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+  border: none;
+  cursor: pointer;
+}
+
+.solicitud-card button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Botón actualizar */
+.solicitud-card > div > button {
+  background: linear-gradient(to right, #6397f1, #5590f7);
+  color: rgb(255, 255, 255);
+  padding: 0.75rem 1.5rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.solicitud-card > div > button:hover:not(:disabled) {
+  background: linear-gradient(to right, #8a9cc4, #77b2ce);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  transform: scale(1.05);
+}
+
+/* Tabla */
+.solicitud-card table {
+  width: 100%;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  border-collapse: collapse;
+}
+
+.solicitud-card thead {
+  background-color: #63aaf1;
+  color: rgb(255, 255, 255);
+}
+
+.solicitud-card thead th {
+  padding: 0.75rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.solicitud-card tbody tr {
+  border-top: 1px solid #e5e7eb;
+  transition: background-color 0.2s;
+}
+
+.solicitud-card tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+.solicitud-card tbody td {
+  padding: 0.75rem;
+}
+
+/* Badges de estado */
+.bg-green-100 {
+  background-color: #d1fae5;
+}
+
+.text-green-800 {
+  color: #065f46;
+}
+
+.bg-red-100 {
+  background-color: #fee2e2;
+}
+
+.text-red-800 {
+  color: #991b1b;
+}
+
+.bg-blue-100 {
+  background-color: #dbeafe;
+}
+
+.text-blue-800 {
+  color: #1e40af;
+}
+
+.bg-yellow-100 {
+  background-color: #fef3c7;
+}
+
+.text-yellow-800 {
+  color: #92400e;
+}
+
+.bg-gray-100 {
+  background-color: #f3f4f6;
+}
+
+.text-gray-800 {
+  color: #1f2937;
+}
+
+.bg-purple-100 {
+  background-color: #ede9fe;
+}
+
+.text-purple-800 {
+  color: #2147a8;
+}
+
+/* Badges generales */
+.solicitud-card tbody span {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* Botones de acciones */
+.solicitud-card tbody button {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  margin: 0 0.25rem;
+}
+
+.bg-green-500 {
+  background-color: #10b981;
+  color: white;
+}
+
+.bg-green-500:hover {
+  background-color: #059669;
+}
+
+.bg-red-500 {
+  background-color: #ef4444;
+  color: white;
+}
+
+.bg-red-500:hover {
+  background-color: #dc2626;
+}
+
+.bg-blue-500 {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.bg-blue-500:hover {
+  background-color: #2563eb;
+}
+
+/* Loading spinner */
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Modal */
+.fixed {
+  position: fixed;
+}
+
+.inset-0 {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.bg-black {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.flex {
+  display: flex;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.items-start {
+  align-items: flex-start;
+}
+
+.z-50 {
+  z-index: 50;
+}
+
+.overflow-auto {
+  overflow: auto;
+}
+
+/* Contenedor del modal */
+.fixed > div {
+  background-color: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  width: 100%;
+  max-width: 80rem;
+  padding: 1.5rem;
+  position: relative;
+  margin: 2rem auto;
+}
+
+/* Botón cerrar modal */
+.fixed > div > button:first-child {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  color: #9ca3af;
+  font-size: 2rem;
+  font-weight: bold;
+  background: none;
+  border: none;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  width: 2rem;
+  height: 2rem;
+}
+
+.fixed > div > button:first-child:hover {
+  color: #374151;
+}
+
+/* Secciones del modal */
+.bg-blue-50 {
+  background-color: #eff6ff;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.bg-green-50 {
+  background-color: #f0fdf4;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.bg-purple-50 {
+  background-color: #faf5ff;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.bg-yellow-50 {
+  background-color: #fffbeb;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.bg-pink-50 {
+  background-color: #fdf2f8;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.bg-orange-50 {
+  background-color: #fff7ed;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.bg-teal-50 {
+  background-color: #f0fdfa;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.bg-indigo-50 {
+  background-color: #eef2ff;
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
+
+/* Títulos de secciones del modal */
+.bg-blue-50 h4,
+.bg-green-50 h4,
+.bg-purple-50 h4,
+.bg-yellow-50 h4,
+.bg-pink-50 h4,
+.bg-orange-50 h4,
+.bg-teal-50 h4,
+.bg-indigo-50 h4 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.text-blue-900 {
+  color: #1e3a8a;
+}
+
+.text-green-900 {
+  color: #14532d;
+}
+
+.text-purple-900 {
+  color: #581c87;
+}
+
+.text-yellow-900 {
+  color: #78350f;
+}
+
+.text-pink-900 {
+  color: #831843;
+}
+
+.text-orange-900 {
+  color: #7c2d12;
+}
+
+.text-teal-900 {
+  color: #134e4a;
+}
+
+/* Grid del modal */
+.grid {
+  display: grid;
+}
+
+.grid-cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.gap-3 {
+  gap: 0.75rem;
+}
+
+.gap-4 {
+  gap: 1rem;
+}
+
+.space-y-3 > * + * {
+  margin-top: 0.75rem;
+}
+
+.space-y-6 > * + * {
+  margin-top: 1.5rem;
+}
+
+/* Texto del modal */
+.text-gray-600 {
+  color: #4b5563;
+  font-size: 0.875rem;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+}
+
+.text-xs {
+  font-size: 0.75rem;
+}
+
+.text-lg {
+  font-size: 1.125rem;
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+}
+
+.text-3xl {
+  font-size: 1.875rem;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.font-bold {
+  font-weight: 700;
+}
+
+.italic {
+  font-style: italic;
+}
+
+/* Colores de texto */
+.text-blue-600 {
+  color: #2563eb;
+}
+
+.text-green-600 {
+  color: #16a34a;
+}
+
+.text-purple-600 {
+  color: #9333ea;
+}
+
+.text-yellow-600 {
+  color: #ca8a04;
+}
+
+.text-indigo-600 {
+  color: #4f46e5;
+}
+
+.text-red-700 {
+  color: #b91c1c;
+}
+
+.text-gray-500 {
+  color: #6b7280;
+}
+
+/* Backgrounds adicionales */
+.bg-white {
+  background-color: white;
+}
+
+.bg-red-100 {
+  background-color: #cdcfd1;
+}
+
+/* Scroll del modal */
+.max-h-\[500px\] {
+  max-height: 500px;
+}
+
+.overflow-y-auto {
+  overflow-y: auto;
+}
+
+.pr-2 {
+  padding-right: 0.5rem;
+}
+
+/* Scrollbar personalizado */
+.overflow-y-auto::-webkit-scrollbar {
+  width: 8px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Border */
+.border-b {
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.border-t {
+  border-top: 1px solid #e5e7eb;
+}
+
+.pb-4 {
+  padding-bottom: 1rem;
+}
+
+.pt-4 {
+  padding-top: 1rem;
+}
+
+.mt-4 {
+  margin-top: 1rem;
+}
+
+.mt-6 {
+  margin-top: 1.5rem;
+}
+
+.mb-2 {
+  margin-bottom: 0.5rem;
+}
+
+.mb-3 {
+  margin-bottom: 0.75rem;
+}
+
+.mb-6 {
+  margin-bottom: 1.5rem;
+}
+
+.p-2 {
+  padding: 0.5rem;
+}
+
+.p-3 {
+  padding: 0.75rem;
+}
+
+/* Botones del footer del modal */
+.flex.justify-end {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.bg-gray-300 {
+  background-color: #d1d5db;
+}
+
+.text-gray-700 {
+  color: #374151;
+}
+
+.bg-gray-400:hover {
+  background-color: #9ca3af;
+}
+
+/* Tags de composición del hogar */
+.inline-block {
+  display: inline-block;
+}
+
+.mr-1 {
+  margin-right: 0.25rem;
+}
+
+.mt-1 {
+  margin-top: 0.25rem;
+}
+
+.px-2 {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.px-3 {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
+
+.px-6 {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.py-1 {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+
+.py-2 {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.rounded {
+  border-radius: 0.25rem;
+}
+
+.rounded-lg {
+  border-radius: 0.5rem;
+}
+
+.rounded-full {
+  border-radius: 9999px;
+}
+
+/* Advertencia de desungulación */
+.col-span-2 {
+  grid-column: span 2;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .solicitud-card {
+    padding: 1rem;
+  }
+
+  .solicitud-card h2 {
+    font-size: 1.5rem;
+  }
+
+  .grid-cols-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .overflow-x-auto {
+    overflow-x: auto;
+  }
+
+  .solicitud-card table {
+    font-size: 0.875rem;
+  }
+
+  .solicitud-card thead th,
+  .solicitud-card tbody td {
+    padding: 0.5rem;
+  }
+
+  .fixed > div {
+    margin: 1rem;
+    padding: 1rem;
+  }
+
+  .max-h-\[500px\] {
+    max-height: 400px;
+  }
+}

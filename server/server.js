@@ -12,11 +12,11 @@ const app = express();
 // ==============================
 app.use(cors()); // Permitir peticiones desde el frontend
 app.use(express.json()); // Parsear JSON
-app.use(express.urlencoded({ extended: true })); // Aceptar formularios (opcional)
-app.use("/uploads", express.static(path.join(__dirname, "uploads"))); // Servir imágenes y archivos estáticos
+app.use(express.urlencoded({ extended: true })); // Aceptar formularios
+app.use("/uploads", express.static(path.join(__dirname, "uploads"))); // Servir archivos estáticos
 
 // ==============================
-// 📦 IMPORTAR RUTAS PRINCIPALES
+// 📦 IMPORTAR RUTAS
 // ==============================
 const empleadosRoutes = require("./routes/empleadosRoutes");
 const animalesRoutes = require("./routes/animalesRoutes");
@@ -24,18 +24,10 @@ const adopcionRoutes = require("./routes/adopcionRoutes");
 const authRoutes = require("./routes/authRoutes");
 const mascotasPerdidasRoutes = require("./routes/mascotasPerdidasRoutes");
 const avistamientosRoutes = require("./routes/avistamientosRoutes");
+const expedienteRoutes = require("./routes/expedienteRoutes"); // ✅ Ruta única para expediente Composite
 
 // ==============================
-// 🩺 IMPORTAR RUTAS DEL EXPEDIENTE CLÍNICO
-// ==============================
-const historialVidaRoutes = require("./routes/historialVidaRoutes");
-const saludRoutes = require("./routes/saludRoutes");
-const vacunasRoutes = require("./routes/vacunasRoutes");
-const desparasitacionesRoutes = require("./routes/desparasitacionesRoutes");
-const comportamientoRoutes = require("./routes/comportamientoRoutes");
-
-// ==============================
-// 🚏 USAR RUTAS PRINCIPALES
+// 🚏 USAR RUTAS
 // ==============================
 app.use("/empleados", empleadosRoutes);
 app.use("/animales", animalesRoutes);
@@ -43,7 +35,7 @@ app.use("/adopcion", adopcionRoutes);
 app.use("/auth", authRoutes);
 app.use("/mascotas-perdidas", mascotasPerdidasRoutes);
 app.use("/avistamientos", avistamientosRoutes);
-
+app.use("/expediente", expedienteRoutes); // ✅ Composite
 
 // ==============================
 // 🌐 RUTA DE PRUEBA / STATUS
@@ -61,7 +53,7 @@ app.get("/", (req, res) => {
         "/auth",
         "/mascotas-perdidas",
         "/avistamientos",
-
+        "/expediente"
       ],
     },
   });
