@@ -6,6 +6,7 @@ const pool = mysql.createPool({
   host: "localhost",
   user: "root",
   password: "",
+
   database: "cemcaa2",  // ← Asegúrate que sea CEMCAA o cemcaa2
   waitForConnections: true,
   connectionLimit: 10,
