@@ -13,7 +13,10 @@ const Salud = {
   create: (data, callback) => {
     db.query('INSERT INTO salud SET ?', data, callback);
   },
-
+// En saludModel.js - Agregar este método
+updateByAnimal: (id_animal, data, callback) => {
+  db.query('UPDATE salud SET ? WHERE id_animal = ?', [data, id_animal], callback);
+},
   update: (id, data, callback) => {
     db.query('UPDATE salud SET ? WHERE id_salud = ?', [data, id], callback);
   },
@@ -22,5 +25,6 @@ const Salud = {
     db.query('DELETE FROM salud WHERE id_salud = ?', [id], callback);
   }
 };
+
 
 module.exports = Salud;
