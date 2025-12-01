@@ -11,14 +11,15 @@ const authController = {
     }
 
     // Buscar primero en usuarios
-    db.query("SELECT * FROM usuarios WHERE email=?", [email], (err, results) => {
-      if (err) return res.status(500).json({ error: "Error en la consulta" });
+    db.query("SELECT * FROM usuarios WHERE email = ?", [email], (err, results) => {
+      if (err) return res.status(500).json({ error: "Error en la consulta usuarios" });
 
       if (results.length > 0) {
         const user = results[0];
         const passwordIsValid = bcrypt.compareSync(password, user.password);
 
-        if (!passwordIsValid) return res.status(401).json({ error: "Contraseña incorrecta" });
+        if (!passwordIsValid)
+          return res.status(401).json({ error: "Contraseña incorrecta" });
 
         return res.json({
           mensaje: "Inicio de sesión exitoso",
@@ -36,33 +37,35 @@ const authController = {
             fecha_registro: user.fecha_registro,
           },
         });
-      } else {
-        // Buscar en empleados
-        db.query("SELECT * FROM empleados WHERE email=?", [email], (err2, results2) => {
-          if (err2) return res.status(500).json({ error: "Error en la consulta" });
-          if (results2.length === 0)
-            return res.status(404).json({ error: "Usuario no encontrado en ninguna tabla" });
-
-          const empleado = results2[0];
-          const passwordIsValid = bcrypt.compareSync(password, empleado.password);
-
-          if (!passwordIsValid) return res.status(401).json({ error: "Contraseña incorrecta" });
-
-          return res.json({
-            mensaje: "Inicio de sesión exitoso",
-            tipo: "empleado",
-            usuario: {
-              id: empleado.id,
-              nombre: empleado.nombre,
-              edad: empleado.edad,
-              pais: empleado.pais,
-              cargo: empleado.cargo,
-              años: empleado.años,
-              email: empleado.email,
-            },
-          });
-        });
       }
+
+      // ---- Si no existe en usuarios, buscar en empleados ----
+      db.query("SELECT * FROM empleados WHERE email = ?", [email], (err2, results2) => {
+        if (err2) return res.status(500).json({ error: "Error en la consulta empleados" });
+
+        if (results2.length === 0)
+          return res.status(404).json({ error: "Usuario no encontrado" });
+
+        const empleado = results2[0];
+        const passwordIsValid = bcrypt.compareSync(password, empleado.password);
+
+        if (!passwordIsValid)
+          return res.status(401).json({ error: "Contraseña incorrecta" });
+
+        return res.json({
+          mensaje: "Inicio de sesión exitoso",
+          tipo: "empleado",
+          usuario: {
+            id: empleado.id,
+            nombre: empleado.nombre,
+            edad: empleado.edad,
+            pais: empleado.pais,
+            cargo: empleado.cargo,
+            años: empleado.años,
+            email: empleado.email,
+          },
+        });
+      });
     });
   },
 
@@ -98,8 +101,8 @@ const authController = {
 
     db.query(
       `INSERT INTO usuarios 
-      (nombre_completo, edad, telefono, email, direccion, ocupacion, horario_laboral_inicio, horario_laboral_fin, fecha_registro, password)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?)`,
+        (nombre_completo, edad, telefono, email, direccion, ocupacion, horario_laboral_inicio, horario_laboral_fin, fecha_registro, password)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?)`,
       [
         nombre_completo,
         edad,
@@ -129,9 +132,8 @@ const authController = {
     const hashedPassword = bcrypt.hashSync(password, 10);
 
     db.query(
-      `INSERT INTO empleados 
-      (nombre, edad, pais, cargo, años, email, password)
-      VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO empleados (nombre, edad, pais, cargo, años, email, password)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
       [nombre, edad, pais, cargo, años, email, hashedPassword],
       (err, results) => {
         if (err) return res.status(500).json({ error: "Error al registrar empleado" });

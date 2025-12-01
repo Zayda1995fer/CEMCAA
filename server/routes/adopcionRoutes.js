@@ -1,20 +1,20 @@
-const express = require("express");
+// server/routes/adopcionRoutes.js
+const express = require('express');
 const router = express.Router();
-const solicitudController = require("../controllers/adopcionController");
+const solicitudController = require('../controllers/solicitudController');
 
-// Crear una nueva solicitud de adopción
-router.post("/crear", solicitudController.crear);
+// Rutas para solicitudes de adopción con patrón Composite
 
-// Obtener todas las solicitudes
-router.get("/todas", solicitudController.obtenerTodas);
+// Crear nueva solicitud (POST)
+router.post('/crear', solicitudController.crearSolicitud);
 
-// Obtener una solicitud por su ID
-router.get("/:id", solicitudController.obtenerPorId);
+// Obtener solicitud completa (GET)
+router.get('/solicitud/:id', solicitudController.obtenerSolicitudCompleta);
 
-// Aprobar una solicitud
-router.put("/:id/aprobar", solicitudController.aprobar);
+// Listar todas las solicitudes (GET)
+router.get('/solicitudes', solicitudController.listarSolicitudes);
 
-// Rechazar una solicitud
-router.put("/:id/rechazar", solicitudController.rechazar);
+// Actualizar estatus de solicitud (PUT)
+router.put('/solicitud/:id/estatus', solicitudController.actualizarEstatus);
 
 module.exports = router;

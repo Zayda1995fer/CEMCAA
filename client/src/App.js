@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, NavLink } from "react-router-dom";
-import { FaPaw, FaDog, FaBars, FaTimes, FaUsers, FaClipboardList, FaFolderOpen, FaTasks, FaSignOutAlt, FaPlusCircle, FaExclamationTriangle,FaEnvelopeOpenText,} from "react-icons/fa";
+import { FaPaw, FaDog, FaBars, FaTimes, FaUsers, FaClipboardList, FaTasks, FaSignOutAlt, FaPlusCircle, FaExclamationTriangle,FaEnvelopeOpenText,} from "react-icons/fa";
 import { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
@@ -16,7 +16,7 @@ import FormCatalogo from "./pages/FormCatalogo";
 import FormMascPerdida from "./pages/FormMascPerdida";
 import PanelEmpleados from "./pages/PanelEmpleados";
 import ReportarAvistamiento from "./pages/ReportarAvistamiento";
-import SolicitudesEmpleado from "./pages/SolicitudesEmpleado"; // ✅ nuevo componente
+import SolicitudCompleta from "./pages/SolicitudCompleta";
 import Expediente from "./pages/Expediente";
 
 function App() {
@@ -105,7 +105,7 @@ function App() {
                       className="nav-link"
                       onClick={() => setIsOpen(false)}
                     >
-                      <FaEnvelopeOpenText className="me-2" /> Solicitudes
+                      <FaEnvelopeOpenText className="me-2" /> Expedientes
                     </NavLink>
                   </li>
 
@@ -194,7 +194,7 @@ function App() {
             <Route path="/form-mascota-perdida" element={<FormMascPerdida />} />
             <Route path="/solicitud" element={<Solicitud />} />
             <Route path="/panel-empleados" element={<PanelEmpleados />} />
-            <Route path="/solicitudes-empleado" element={<SolicitudesEmpleado />} /> {/* ✅ nueva ruta */}
+            <Route path="/solicitud-Comp" element={<SolicitudCompleta />} /> {/* ✅ nueva ruta */}
             <Route path="/login" element={<Login />} />
             <Route path="/reportar-avistamiento/:id" element={<ReportarAvistamiento />} />
             <Route path="/expediente" element={<Expediente />} />

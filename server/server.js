@@ -19,12 +19,26 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads"))); // Servir 
 // 📦 IMPORTAR RUTAS
 // ==============================
 const empleadosRoutes = require("./routes/empleadosRoutes");
+console.log("empleadosRoutes:", typeof empleadosRoutes);
+
 const animalesRoutes = require("./routes/animalesRoutes");
+console.log("animalesRoutes:", typeof animalesRoutes);
+
 const adopcionRoutes = require("./routes/adopcionRoutes");
+console.log("adopcionRoutes:", typeof adopcionRoutes);
+
 const authRoutes = require("./routes/authRoutes");
+console.log("authRoutes:", typeof authRoutes);
+
 const mascotasPerdidasRoutes = require("./routes/mascotasPerdidasRoutes");
+console.log("mascotasPerdidasRoutes:", typeof mascotasPerdidasRoutes);
+
 const avistamientosRoutes = require("./routes/avistamientosRoutes");
-const expedienteRoutes = require("./routes/expedienteRoutes"); // ✅ Ruta única para expediente Composite
+console.log("avistamientosRoutes:", typeof avistamientosRoutes);
+
+const expedienteRoutes = require("./routes/expedienteRoutes");
+console.log("expedienteRoutes:", typeof expedienteRoutes);
+
 
 // ==============================
 // 🚏 USAR RUTAS
