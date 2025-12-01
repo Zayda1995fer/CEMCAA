@@ -63,7 +63,8 @@ function Catalogo() {
 
   const perdidasFiltradas = perdidas.filter(
     (m) =>
-      !busqueda || m.nombre?.toLowerCase().includes(busqueda.trim().toLowerCase())
+      !busqueda ||
+      m.nombre?.toLowerCase().includes(busqueda.trim().toLowerCase())
   );
 
   return (
@@ -145,15 +146,20 @@ function Catalogo() {
                       borderTopRightRadius: "0.75rem",
                     }}
                   />
-                  <span className="etiqueta-especie">{m.especie || "Desconocido"}</span>
+                  <span className="etiqueta-especie">
+                    {m.especie || "Desconocido"}
+                  </span>
                   <span
-                    className={`etiqueta-estatus ${
-                      (m.estatus || "En adopción").toLowerCase().replace(" ", "-")
-                    }`}
+                    className={`etiqueta-estatus ${(
+                      m.estatus || "En adopción"
+                    )
+                      .toLowerCase()
+                      .replace(" ", "-")}`}
                   >
                     {m.estatus || "En adopción"}
                   </span>
                 </div>
+
                 <Card.Body className="card-animal-body d-flex flex-column">
                   <div className="contenido-scroll">
                     <h5>{m.nombre}</h5>
@@ -162,24 +168,48 @@ function Catalogo() {
                         <strong>Sexo:</strong> {m.sexo}
                       </li>
                       <li>
-                        <strong>Edad:</strong> {m.edadAprox || "No especificada"}
+                        <strong>Edad:</strong>{" "}
+                        {m.edadAprox || "No especificada"}
                       </li>
                       <li>
                         <strong>Tamaño:</strong> {m.tamaño}
                       </li>
-                      {m.marcas && <li><strong>Color / Marcas:</strong> {m.marcas}</li>}
-                      {m.rasgos && <li><strong>Rasgos:</strong> {m.rasgos}</li>}
+                      {m.marcas && (
+                        <li>
+                          <strong>Color / Marcas:</strong> {m.marcas}
+                        </li>
+                      )}
+                      {m.rasgos && (
+                        <li>
+                          <strong>Rasgos:</strong> {m.rasgos}
+                        </li>
+                      )}
                     </ul>
-                    {m.descripcion && <p className="text-muted">{m.descripcion}</p>}
+                    {m.descripcion && (
+                      <p className="text-muted">{m.descripcion}</p>
+                    )}
                   </div>
+
                   <div className="d-flex justify-content-between mt-auto pt-3 border-top">
+
+                    {/* 🔥 Nuevo: Ver más detalles */}
+                    <Button
+                      className="btn btn-primary d-flex align-items-center gap-1"
+                      size="sm"
+                      onClick={() => navigate(`/animal/${m.id}`)}
+                    >
+                      <i className="bi bi-search"></i> Ver más
+                    </Button>
+
+                    {/* 🔥 Modificado: Solicitud con ID */}
                     <Button
                       className="btn btn-success d-flex align-items-center gap-1"
                       size="sm"
-                      onClick={() => navigate("/solicitud")}
+                      onClick={() => navigate(`/solicitud/${m.id}`)}
                     >
                       <i className="bi bi-heart-fill"></i> Adoptar
                     </Button>
+
                   </div>
                 </Card.Body>
               </Card>
@@ -196,6 +226,7 @@ function Catalogo() {
       <h3 style={{ color: "#dc2626", fontWeight: "700", marginBottom: "15px" }}>
         🐾 Mascotas Perdidas por la Ciudadanía
       </h3>
+
       <Row className="g-4">
         {perdidasFiltradas.length > 0 ? (
           perdidasFiltradas.map((m) => (
@@ -213,8 +244,11 @@ function Catalogo() {
                       borderTopRightRadius: "0.75rem",
                     }}
                   />
-                  <span className="etiqueta-especie">{m.especie || "Desconocido"}</span>
+                  <span className="etiqueta-especie">
+                    {m.especie || "Desconocido"}
+                  </span>
                 </div>
+
                 <Card.Body className="card-animal-body d-flex flex-column">
                   <div className="contenido-scroll">
                     <h5>{m.nombre}</h5>
@@ -223,26 +257,38 @@ function Catalogo() {
                         <strong>Sexo:</strong> {m.sexo}
                       </li>
                       <li>
-                        <strong>Edad:</strong> {m.edadAprox || "No especificada"}
+                        <strong>Edad:</strong>{" "}
+                        {m.edadAprox || "No especificada"}
                       </li>
                       <li>
                         <strong>Tamaño:</strong> {m.tamaño}
                       </li>
-                      {m.marcas && <li><strong>Color / Marcas:</strong> {m.marcas}</li>}
-                      {m.rasgos && <li><strong>Rasgos:</strong> {m.rasgos}</li>}
+                      {m.marcas && (
+                        <li>
+                          <strong>Color / Marcas:</strong> {m.marcas}
+                        </li>
+                      )}
+                      {m.rasgos && (
+                        <li>
+                          <strong>Rasgos:</strong> {m.rasgos}
+                        </li>
+                      )}
                     </ul>
-                    {m.descripcion && <p className="text-muted">{m.descripcion}</p>}
+                    {m.descripcion && (
+                      <p className="text-muted">{m.descripcion}</p>
+                    )}
                   </div>
+
                   <div className="d-flex justify-content-between mt-auto pt-3 border-top">
                     <Button
                       className="btn btn-info d-flex align-items-center gap-1"
                       size="sm"
-                      onClick={() => {
-                        console.log("Mascota perdida seleccionada ID:", m.id);
-                        navigate(`/reportar-avistamiento/${m.id}`);
-                      }}
+                      onClick={() =>
+                        navigate(`/reportar-avistamiento/${m.id}`)
+                      }
                     >
-                      <i className="bi bi-exclamation-triangle"></i> Reportar Avistamiento
+                      <i className="bi bi-exclamation-triangle"></i> Reportar
+                      Avistamiento
                     </Button>
                   </div>
                 </Card.Body>
@@ -250,7 +296,9 @@ function Catalogo() {
             </Col>
           ))
         ) : (
-          <p className="text-center mt-4 text-muted">No hay mascotas perdidas registradas.</p>
+          <p className="text-center mt-4 text-muted">
+            No hay mascotas perdidas registradas.
+          </p>
         )}
       </Row>
     </Container>

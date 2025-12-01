@@ -2,11 +2,16 @@
 
 const express = require("express");
 const router = express.Router();
+
 const authController = require("../controllers/authController");
 
+// LOGIN
 router.post("/login", authController.login);
-router.post("/register-usuario", authController.registerUsuario);
-router.post("/register-empleado", authController.registerEmpleado);
 
+// REGISTRO DE USUARIO NORMAL
+router.post("/register-usuario", authController.registerUsuario);
+
+// REGISTRO DE EMPLEADO
+router.post("/register-empleado", authController.registerEmpleado);
 
 module.exports = router;
