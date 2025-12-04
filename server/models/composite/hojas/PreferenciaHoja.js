@@ -26,6 +26,10 @@ class PreferenciaLeaf extends SolicitudComponent {
   validar() {
     const errores = [];
 
+    if (this.datos.tipo_animal) {
+    this.datos.tipo_animal = this.datos.tipo_animal.toLowerCase().trim();
+   }
+
     if (!this.datos.tipo_animal) {
       errores.push('Preferencia: Debe indicar el tipo de animal que desea adoptar');
     }

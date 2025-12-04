@@ -37,19 +37,27 @@ class EconomicoHoja extends SolicitudComponent {
 
   validar() {
     const errores = [];
-    
+
+    // Validar actitud gastos veterinarios
     if (!this.datos.actitud_gastos_veterinarios) {
       errores.push("Debe indicar su actitud hacia los gastos veterinarios");
     }
-    
-    if (!this.datos.dispuesto_esterilizar) {
+
+    // Validar disposición a esterilizar
+    if (this.datos.dispuesto_esterilizar === null || 
+        this.datos.dispuesto_esterilizar === undefined) {
       errores.push("Debe indicar si está dispuesto a esterilizar la mascota");
     }
-    
-    if (!this.datos.presupuesto_mensual_estimado || this.datos.presupuesto_mensual_estimado <= 0) {
+
+    // Validar presupuesto
+    if (
+      this.datos.presupuesto_mensual_estimado === null ||
+      this.datos.presupuesto_mensual_estimado === undefined ||
+      this.datos.presupuesto_mensual_estimado <= 0
+    ) {
       errores.push("Debe especificar un presupuesto mensual válido");
     }
-    
+
     return errores;
   }
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Axios from "axios";
+import Axios from "../config/axios";
 
 function Empleados() {
   const [id, setId] = useState(null);

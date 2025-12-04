@@ -1,31 +1,24 @@
-// database.js - CON POOL DE CONEXIONES (CommonJS)
-const mysql = require("mysql2");
+const mysql = require('mysql2');
 
 const pool = mysql.createPool({
-  host: "localhost",
-  user: "root",
-<<<<<<< Updated upstream
-  password: "",
-
-  database: "cemcaa2",  // ← Asegúrate que sea CEMCAA o cemcaa2
-=======
-  password: "123456",
-  database: "cemcaa",
->>>>>>> Stashed changes
+  host: 'localhost',
+  user: 'root',
+  password: '123456',
+  database: 'cemcaa',
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
 });
 
-// Probar la conexión
-pool.getConnection((err, connection) => {
-  if (err) {
-    console.error("❌ Error conectando a la base de datos:", err);
-    return;
-  }
-  console.log("✓ Conectado a MySQL");
-  connection.release();
-});
-
-// Exportación correcta para CommonJS
-module.exports = pool;
+// Exportar ambas versiones
+module.exports = {
+  // Para código que usa callbacks (empleados, etc.)
+  query: (sql, params, callback) => pool.query(sql, params, callback),
+  execute: (sql, params, callback) => pool.execute(sql, params, callback),
+  
+  // Para código que usa async/await (solicitudes)
+  getConnection: () => pool.promise().getConnection(),
+  
+  // Exportar el pool original por si acaso
+  pool: pool
+};

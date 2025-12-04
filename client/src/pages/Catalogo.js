@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Card, Button, Form } from "react-bootstrap";
+import { Container, Row, Col, Card, Button, Form, Alert } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import Axios from "axios";
+import Axios from "../config/axios";
 import "../App.css";
 
 function Catalogo() {
@@ -13,24 +13,12 @@ function Catalogo() {
   const [perdidas, setPerdidas] = useState([]);
   const [filtroEstatus, setFiltroEstatus] = useState("");
   const [busqueda, setBusqueda] = useState("");
-  const [usuario, setUsuario] = useState(null);
+  const [mostrarAlerta, setMostrarAlerta] = useState(false);
 
   useEffect(() => {
-    verificarUsuario();
     cargarMascotas();
     cargarMascotasPerdidas();
   }, []);
-
-  const verificarUsuario = async () => {
-    try {
-      const res = await Axios.get("http://localhost:3001/usuario-actual", {
-        withCredentials: true,
-      });
-      setUsuario(res.data);
-    } catch (err) {
-      console.log("No se pudo verificar usuario:", err);
-    }
-  };
 
   const cargarMascotas = async () => {
     try {
@@ -54,6 +42,25 @@ function Catalogo() {
     setFiltroEstatus(e.target.value);
   };
 
+  const handleAdoptar = async (mascotaId) => {
+    // ✅ VERIFICAR SESIÓN ANTES DE ADOPTAR
+    try {
+      await Axios.get("http://localhost:3001/usuario-actual", {
+        withCredentials: true,
+      });
+      
+      // Si llegamos aquí, hay sesión activa
+      navigate(`/solicitud/${mascotaId}`);
+      
+    } catch (err) {
+      // No hay sesión, mostrar alerta y redirigir
+      setMostrarAlerta(true);
+      setTimeout(() => {
+        navigate("/auth");
+      }, 2000);
+    }
+  };
+
   const mascotasFiltradas = mascotas.filter(
     (m) =>
       (!busqueda ||
@@ -69,6 +76,23 @@ function Catalogo() {
 
   return (
     <Container className="catalogo-container my-5">
+      {/* Alerta de inicio de sesión requerido */}
+      {mostrarAlerta && (
+        <Alert 
+          variant="warning" 
+          dismissible 
+          onClose={() => setMostrarAlerta(false)}
+          className="position-fixed top-0 start-50 translate-middle-x mt-3"
+          style={{ zIndex: 9999, width: "90%", maxWidth: "500px" }}
+        >
+          <Alert.Heading>
+            <i className="bi bi-exclamation-triangle-fill me-2"></i>
+            Inicio de sesión requerido
+          </Alert.Heading>
+          <p>Por favor inicia sesión para poder adoptar una mascota. Serás redirigido al login...</p>
+        </Alert>
+      )}
+
       <div className="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 flex-wrap gap-3">
         <h2
           className="text-center text-md-start mb-0"
@@ -109,23 +133,6 @@ function Catalogo() {
           <option value="Perdido">Perdido</option>
           <option value="Entregado">Entregado</option>
         </Form.Select>
-
-        <div className="d-flex gap-2">
-          {usuario && (
-            <Button
-              className="btn btn-warning d-flex align-items-center gap-2 shadow-sm"
-              style={{
-                fontWeight: "600",
-                borderRadius: "0.5rem",
-                color: "#1f2937",
-              }}
-              onClick={() => navigate("/form-mascota-perdida")}
-            >
-              <i className="bi bi-exclamation-triangle-fill"></i> Publicar Mascota
-              Perdida
-            </Button>
-          )}
-        </div>
       </div>
 
       {/* Mascotas normales */}
@@ -133,7 +140,7 @@ function Catalogo() {
         {mascotasFiltradas.length > 0 ? (
           mascotasFiltradas.map((m) => (
             <Col key={m.id} xs={12} sm={6} lg={4}>
-              <Card className="card-animal position-relative shadow-sm border-0">
+              <Card className="card-animal position-relative shadow-sm border-0 h-100">
                 <div style={{ position: "relative" }}>
                   <Card.Img
                     variant="top"
@@ -161,77 +168,77 @@ function Catalogo() {
                 </div>
 
                 <Card.Body className="card-animal-body d-flex flex-column">
-                  <div className="contenido-scroll">
-                    <h5>{m.nombre}</h5>
-                    <ul>
-                      <li>
+                  <div className="contenido-scroll flex-grow-1">
+                    <h5 className="mb-3">{m.nombre}</h5>
+                    <ul className="list-unstyled">
+                      <li className="mb-2">
+                        <i className="bi bi-gender-ambiguous text-primary me-2"></i>
                         <strong>Sexo:</strong> {m.sexo}
                       </li>
-                      <li>
+                      <li className="mb-2">
+                        <i className="bi bi-calendar-heart text-primary me-2"></i>
                         <strong>Edad:</strong>{" "}
                         {m.edadAprox || "No especificada"}
                       </li>
-                      <li>
+                      <li className="mb-2">
+                        <i className="bi bi-rulers text-primary me-2"></i>
                         <strong>Tamaño:</strong> {m.tamaño}
                       </li>
                       {m.marcas && (
-                        <li>
+                        <li className="mb-2">
+                          <i className="bi bi-palette text-primary me-2"></i>
                           <strong>Color / Marcas:</strong> {m.marcas}
                         </li>
                       )}
                       {m.rasgos && (
-                        <li>
+                        <li className="mb-2">
+                          <i className="bi bi-star text-primary me-2"></i>
                           <strong>Rasgos:</strong> {m.rasgos}
                         </li>
                       )}
                     </ul>
                     {m.descripcion && (
-                      <p className="text-muted">{m.descripcion}</p>
+                      <p className="text-muted small mt-2">{m.descripcion}</p>
                     )}
                   </div>
 
-                  <div className="d-flex justify-content-between mt-auto pt-3 border-top">
+                  <div className="d-flex justify-content-between mt-3 pt-3 border-top">
+                    
 
-                    {/* 🔥 Nuevo: Ver más detalles */}
-                    <Button
-                      className="btn btn-primary d-flex align-items-center gap-1"
-                      size="sm"
-                      onClick={() => navigate(`/animal/${m.id}`)}
-                    >
-                      <i className="bi bi-search"></i> Ver más
-                    </Button>
-
-                    {/* 🔥 Modificado: Solicitud con ID */}
                     <Button
                       className="btn btn-success d-flex align-items-center gap-1"
                       size="sm"
-                      onClick={() => navigate(`/solicitud/${m.id}`)}
+                      onClick={() => handleAdoptar(m.id)}
+                      disabled={m.estatus !== "En Adopción"}
+                      title={m.estatus !== "En Adopción" ? "Esta mascota no está disponible para adopción" : "Iniciar proceso de adopción"}
                     >
                       <i className="bi bi-heart-fill"></i> Adoptar
                     </Button>
-
                   </div>
                 </Card.Body>
               </Card>
             </Col>
           ))
         ) : (
-          <p className="text-center mt-4 text-muted">
-            No hay mascotas que coincidan con tu búsqueda o filtro.
-          </p>
+          <Col xs={12}>
+            <Alert variant="info" className="text-center">
+              <i className="bi bi-info-circle me-2"></i>
+              No hay mascotas que coincidan con tu búsqueda o filtro.
+            </Alert>
+          </Col>
         )}
       </Row>
 
       {/* Mascotas perdidas */}
-      <h3 style={{ color: "#dc2626", fontWeight: "700", marginBottom: "15px" }}>
-        🐾 Mascotas Perdidas por la Ciudadanía
+      <h3 style={{ color: "#dc2626", fontWeight: "700", marginBottom: "20px" }}>
+        🆘 Mascotas Perdidas por la Ciudadanía
       </h3>
 
       <Row className="g-4">
         {perdidasFiltradas.length > 0 ? (
           perdidasFiltradas.map((m) => (
             <Col key={m.id} xs={12} sm={6} lg={4}>
-              <Card className="card-animal position-relative shadow-sm border-0">
+              <Card className="card-animal position-relative shadow-sm border-0 h-100 border-danger">
                 <div style={{ position: "relative" }}>
                   <Card.Img
                     variant="top"
@@ -244,44 +251,52 @@ function Catalogo() {
                       borderTopRightRadius: "0.75rem",
                     }}
                   />
-                  <span className="etiqueta-especie">
+                  <span className="etiqueta-especie bg-danger">
                     {m.especie || "Desconocido"}
+                  </span>
+                  <span className="badge bg-danger position-absolute top-0 end-0 m-2">
+                    PERDIDO
                   </span>
                 </div>
 
                 <Card.Body className="card-animal-body d-flex flex-column">
-                  <div className="contenido-scroll">
-                    <h5>{m.nombre}</h5>
-                    <ul>
-                      <li>
+                  <div className="contenido-scroll flex-grow-1">
+                    <h5 className="mb-3 text-danger">{m.nombre}</h5>
+                    <ul className="list-unstyled">
+                      <li className="mb-2">
+                        <i className="bi bi-gender-ambiguous text-danger me-2"></i>
                         <strong>Sexo:</strong> {m.sexo}
                       </li>
-                      <li>
+                      <li className="mb-2">
+                        <i className="bi bi-calendar-heart text-danger me-2"></i>
                         <strong>Edad:</strong>{" "}
                         {m.edadAprox || "No especificada"}
                       </li>
-                      <li>
+                      <li className="mb-2">
+                        <i className="bi bi-rulers text-danger me-2"></i>
                         <strong>Tamaño:</strong> {m.tamaño}
                       </li>
                       {m.marcas && (
-                        <li>
+                        <li className="mb-2">
+                          <i className="bi bi-palette text-danger me-2"></i>
                           <strong>Color / Marcas:</strong> {m.marcas}
                         </li>
                       )}
                       {m.rasgos && (
-                        <li>
+                        <li className="mb-2">
+                          <i className="bi bi-star text-danger me-2"></i>
                           <strong>Rasgos:</strong> {m.rasgos}
                         </li>
                       )}
                     </ul>
                     {m.descripcion && (
-                      <p className="text-muted">{m.descripcion}</p>
+                      <p className="text-muted small mt-2">{m.descripcion}</p>
                     )}
                   </div>
 
-                  <div className="d-flex justify-content-between mt-auto pt-3 border-top">
+                  <div className="d-flex justify-content-center mt-3 pt-3 border-top">
                     <Button
-                      className="btn btn-info d-flex align-items-center gap-1"
+                      className="btn btn-danger d-flex align-items-center gap-2 w-100"
                       size="sm"
                       onClick={() =>
                         navigate(`/reportar-avistamiento/${m.id}`)
@@ -296,9 +311,12 @@ function Catalogo() {
             </Col>
           ))
         ) : (
-          <p className="text-center mt-4 text-muted">
-            No hay mascotas perdidas registradas.
-          </p>
+          <Col xs={12}>
+            <Alert variant="success" className="text-center">
+              <i className="bi bi-check-circle me-2"></i>
+              No hay mascotas perdidas registradas en este momento.
+            </Alert>
+          </Col>
         )}
       </Row>
     </Container>

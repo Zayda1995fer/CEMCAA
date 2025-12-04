@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Form, Button, Row, Col, Image, Card } from "react-bootstrap";
-import Axios from "axios";
+import Axios from "../config/axios";
 import Swal from "sweetalert2";
 import "../App.css";
 
