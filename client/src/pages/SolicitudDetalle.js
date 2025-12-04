@@ -1,9 +1,9 @@
-// client/src/pages/SolicitudCompleta.js
 import React from 'react';
+
 import { useParams } from 'react-router-dom';
 import SolicitudViewer from '../components/Solicitud/SolicitudViewer';
 
-const SolicitudCompleta = () => {
+const SolicitudDetalle = () => {
   const { id } = useParams();
 
   return (
@@ -13,4 +13,4 @@ const SolicitudCompleta = () => {
   );
 };
 
-export default SolicitudCompleta;
+export default SolicitudDetalle;

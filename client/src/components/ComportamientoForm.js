@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { Form, Button, Row, Col } from "react-bootstrap";
-import Axios from "axios";
+import Axios from "../config/axios";
 import Swal from "sweetalert2";
 
 function ComportamientoForm({ idAnimal }) {

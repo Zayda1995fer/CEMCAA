@@ -44,23 +44,23 @@ class SolicitudBuilder {
   }
 
   agregarExperiencia(datos) {
-    const experiencia = new ExperienciaHoja();
-    experiencia.setDatos(datos);
-    this.solicitud.agregar(experiencia);
+    const exp = new ExperienciaHoja();
+    exp.setDatos(datos);
+    this.solicitud.agregar(exp);
     return this;
   }
 
   agregarEconomico(datos) {
-    const economico = new EconomicoHoja();
-    economico.setDatos(datos);
-    this.solicitud.agregar(economico);
+    const eco = new EconomicoHoja();
+    eco.setDatos(datos);
+    this.solicitud.agregar(eco);
     return this;
   }
 
   agregarPreferencia(datos) {
-    const preferencia = new PreferenciaHoja();
-    preferencia.setDatos(datos);
-    this.solicitud.agregar(preferencia);
+    const pref = new PreferenciaHoja();
+    pref.setDatos(datos);
+    this.solicitud.agregar(pref);
     return this;
   }
 
@@ -88,80 +88,94 @@ class SolicitudBuilder {
     return resultado;
   }
 
-  // Método estático para construir desde datos del frontend
-  static construirDesdeFormulario(datos) {
-    const builder = new SolicitudBuilder();
-
-    builder
-      .setDatosGenerales({
-        usuario_id: datos.usuario_id,
-        animal_id: datos.animal_id
-      })
-      .agregarVivienda(datos.vivienda)
-      .agregarHogarFamilia(datos.hogar)
-      .agregarExperiencia(datos.experiencia)
-      .agregarEconomico(datos.economico)
-      .agregarPreferencia(datos.preferencia);
-
-    // Agregar secciones opcionales según la preferencia
-    if (datos.perros) {
-      builder.agregarPerros(datos.perros);
-    }
-
-    if (datos.gatos) {
-      builder.agregarGatos(datos.gatos);
-    }
-
-    return builder.construir();
-  }
-
-  // Método estático para reconstruir desde BD
+  // ------------------------------------------------------------
+  // 🔥 RECONSTRUCCIÓN DESDE BD — VERSION CORREGIDA
+  // ------------------------------------------------------------
   static reconstruirDesdeBD(datosBD) {
     const builder = new SolicitudBuilder();
 
+    // Datos generales:
     builder.setDatosGenerales({
       usuario_id: datosBD.usuario_id,
       animal_id: datosBD.animal_id
     });
 
-    // Reconstruir cada sección si existe
-    if (datosBD.vivienda) {
-      builder.agregarVivienda(datosBD.vivienda);
+    // ------------------------------------------------------------
+    // VIVIENDA — si la BD trae columnas planas
+    // ------------------------------------------------------------
+    if (datosBD.vivienda_tipo || datosBD.vivienda_ventanas || datosBD.vivienda_espacio) {
+      builder.agregarVivienda({
+        tipo_vivienda: datosBD.vivienda_tipo,
+        ventanas_protegidas: datosBD.vivienda_ventanas,
+        espacio: datosBD.vivienda_espacio
+      });
     }
 
-    if (datosBD.hogar) {
-      builder.agregarHogarFamilia(datosBD.hogar);
+    // ------------------------------------------------------------
+    // HOGAR
+    // ------------------------------------------------------------
+    if (datosBD.hogar_personas || datosBD.hogar_ninos) {
+      builder.agregarHogarFamilia({
+        personas_hogar: datosBD.hogar_personas,
+        ninos_hogar: datosBD.hogar_ninos
+      });
     }
 
-    if (datosBD.experiencia) {
-      builder.agregarExperiencia(datosBD.experiencia);
+    // ------------------------------------------------------------
+    // EXPERIENCIA
+    // ------------------------------------------------------------
+    if (datosBD.exp_tiempo || datosBD.exp_tipo) {
+      builder.agregarExperiencia({
+        tiempo: datosBD.exp_tiempo,
+        tipo_experiencia: datosBD.exp_tipo
+      });
     }
 
-    if (datosBD.economico) {
-      builder.agregarEconomico(datosBD.economico);
+    // ------------------------------------------------------------
+    // ECONÓMICO
+    // ------------------------------------------------------------
+    if (datosBD.eco_ingresos || datosBD.eco_estabilidad) {
+      builder.agregarEconomico({
+        ingresos: datosBD.eco_ingresos,
+        estabilidad: datosBD.eco_estabilidad
+      });
     }
 
-    if (datosBD.preferencia) {
-      builder.agregarPreferencia(datosBD.preferencia);
+    // ------------------------------------------------------------
+    // PREFERENCIAS
+    // ------------------------------------------------------------
+    if (datosBD.pref_tipo || datosBD.pref_tamano) {
+      builder.agregarPreferencia({
+        tipo: datosBD.pref_tipo,
+        tamano: datosBD.pref_tamano
+      });
     }
 
-    if (datosBD.perros) {
-      builder.agregarPerros(datosBD.perros);
+    // ------------------------------------------------------------
+    // PERROS
+    // ------------------------------------------------------------
+    if (datosBD.perros_raza || datosBD.perros_patio) {
+      builder.agregarPerros({
+        raza: datosBD.perros_raza,
+        patio: datosBD.perros_patio
+      });
     }
 
-    if (datosBD.gatos) {
-      builder.agregarGatos(datosBD.gatos);
+    // ------------------------------------------------------------
+    // GATOS
+    // ------------------------------------------------------------
+    if (datosBD.gatos_ventanas || datosBD.gatos_adaptacion) {
+      builder.agregarGatos({
+        ventanas_protegidas: datosBD.gatos_ventanas,
+        adaptacion_hogar: datosBD.gatos_adaptacion
+      });
     }
 
     const solicitud = builder.construir();
-    
-    // Restaurar fecha y estatus si existen
-    if (datosBD.fecha_solicitud) {
-      solicitud.datosGenerales.fecha_solicitud = datosBD.fecha_solicitud;
-    }
-    if (datosBD.estatus) {
-      solicitud.datosGenerales.estatus = datosBD.estatus;
-    }
+
+    // Restaurar campos
+    solicitud.datosGenerales.fecha_solicitud = datosBD.fecha_solicitud;
+    solicitud.datosGenerales.estatus = datosBD.estatus;
 
     return solicitud;
   }

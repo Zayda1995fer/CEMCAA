@@ -1,5 +1,7 @@
 // client/src/components/Solicitud/SeccionSolicitud.js
 import React from 'react';
+import "../../styles/solicitud.css";
+
 
 const SeccionSolicitud = ({ seccion, isExpanded, onToggle }) => {
   const getIcono = (nombre) => {

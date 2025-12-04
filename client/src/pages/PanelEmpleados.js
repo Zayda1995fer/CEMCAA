@@ -1,7 +1,7 @@
 // src/pages/PanelEmpleados.js
 import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Card, Button, Spinner, Badge } from "react-bootstrap";
-import Axios from "axios";
+import Axios from "../config/axios";
 import Swal from "sweetalert2";
 import "../App.css";
 

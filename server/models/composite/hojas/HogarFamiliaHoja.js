@@ -22,41 +22,22 @@ class HogarFamiliaHoja extends SolicitudComponent {
     this.datos = { ...this.datos, ...datos };
   }
 
-  agregar() {
-    throw new Error("No se pueden agregar componentes a una hoja");
-  }
-
-  eliminar() {
-    throw new Error("No se pueden eliminar componentes de una hoja");
-  }
-
-  obtenerHijos() {
-    return [];
-  }
-
-  mostrar(nivel = 0) {
-    const indentacion = '  '.repeat(nivel);
-    console.log(`${indentacion}👨‍👩‍👧‍👦 ${this.nombre}`);
-    console.log(`${indentacion}   Horas solo: ${this.datos.horas_solo_al_dia || 'No especificado'}`);
-    console.log(`${indentacion}   Responsable: ${this.datos.responsable_principal || 'No especificado'}`);
-    console.log(`${indentacion}   Otras mascotas: ${this.datos.vive_con_otras_mascotas ? 'Sí' : 'No'}`);
-  }
-
   validar() {
     const errores = [];
-    
-    if (!this.datos.horas_solo_al_dia) {
+
+    if (this.datos.horas_solo_al_dia === null || this.datos.horas_solo_al_dia === undefined) {
       errores.push("Debe especificar las horas que el animal estará solo");
     }
-    
-    if (!this.datos.responsable_principal) {
+
+    if (!this.datos.responsable_principal || this.datos.responsable_principal.trim() === '') {
       errores.push("Debe indicar quién será el responsable principal");
     }
-    
-    if (this.datos.vive_con_otras_mascotas && !this.datos.tipos_mascotas_actuales) {
+
+    if (this.datos.vive_con_otras_mascotas === 1 &&
+        (!this.datos.tipos_mascotas_actuales || this.datos.tipos_mascotas_actuales.trim() === "")) {
       errores.push("Debe especificar qué mascotas tiene actualmente");
     }
-    
+
     return errores;
   }
 
